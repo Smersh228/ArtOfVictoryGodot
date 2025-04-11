@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://mwntit0oa26a"]
+
+[ext_resource type="Script" uid="uid://cjulufnb7hd2b" path="res://Tile.cs" id="1_7jaxa"]
+[ext_resource type="CylinderMesh" uid="uid://d6rs6kq06lue" path="res://Tile.tres" id="1_14tbq"]
+
+[node name="StaticBody3D" type="StaticBody3D"]
+script = ExtResource("1_7jaxa")
+
+[node name="CoordsLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.0574046, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_14tbq")
+
+[node name="CollisionPolygon3D" type="CollisionPolygon3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -0.434151, -0.000297759, -0.498999)
+depth = 0.1
+polygon = PackedVector2Array(0.432, 0, 0.866, 0.25, 0.866, 0.75, 0.432, 1, 0, 0.75, 0, 0.25)

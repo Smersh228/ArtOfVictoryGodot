@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://ckar6ao6mw072"]
+
+[ext_resource type="Script" uid="uid://c6qmcipon53kh" path="res://Unit.cs" id="1_btf8p"]
+[ext_resource type="ArrayMesh" uid="uid://bfvl8ng3bdbyg" path="res://sk_sov_aircraft_po2.obj" id="2_ctwoc"]
+
+[node name="Unit" type="Node3D"]
+script = ExtResource("1_btf8p")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.000506094, 0, 0.000862478, 0, 0.001, 0, -0.000862478, 0, -0.000506094, 0, 0.439558, 0)
+mesh = ExtResource("2_ctwoc")
