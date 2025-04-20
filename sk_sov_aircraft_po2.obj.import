@@ -4,14 +4,11 @@ importer="wavefront_obj"
 importer_version=1
 type="Mesh"
 uid="uid://bfvl8ng3bdbyg"
-path="res://.godot/imported/sk_sov_aircraft_po2.obj-26c903099b0458c7c33a63851644eee7.mesh"
+valid=false
 
 [deps]
 
-files=["res://.godot/imported/sk_sov_aircraft_po2.obj-26c903099b0458c7c33a63851644eee7.mesh"]
-
 source_file="res://sk_sov_aircraft_po2.obj"
-dest_files=["res://.godot/imported/sk_sov_aircraft_po2.obj-26c903099b0458c7c33a63851644eee7.mesh", "res://.godot/imported/sk_sov_aircraft_po2.obj-26c903099b0458c7c33a63851644eee7.mesh"]
 
 [params]
 
