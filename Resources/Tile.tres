@@ -1,6 +1,6 @@
 [gd_resource type="CylinderMesh" load_steps=2 format=3 uid="uid://d6rs6kq06lue"]
 
-[ext_resource type="Material" uid="uid://bcffhdre3gx44" path="res://TileColor.tres" id="1_we4x6"]
+[ext_resource type="Material" uid="uid://bcffhdre3gx44" path="res://Resources/TileColor.tres" id="1_we4x6"]
 
 [resource]
 material = ExtResource("1_we4x6")

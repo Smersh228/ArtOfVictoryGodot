@@ -11,9 +11,9 @@ config_version=5
 [application]
 
 config/name="3d_hexagons"
-run/main_scene="res://node_3d.tscn"
+run/main_scene="res://Scenes/node_3d.tscn"
 config/features=PackedStringArray("4.4", "C#", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://Sprites/icon.svg"
 
 [dotnet]
 

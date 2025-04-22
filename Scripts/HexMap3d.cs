@@ -7,7 +7,7 @@ public partial class HexMap3d : Node3D
 	Tile[,] m;
 	Tile oldTileCollider = null;
 	OmniLight3D light = new OmniLight3D();
-	private PackedScene _tileScene = GD.Load<PackedScene>("res://Tile.tscn");
+	private PackedScene _tileScene = GD.Load<PackedScene>("res://Scenes/Tile.tscn");
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -59,21 +59,21 @@ public partial class HexMap3d : Node3D
 
 			if (tileCollider != oldTileCollider && oldTileCollider != null)
 			{
-				oldTileCollider.GetNode<MeshInstance3D>("MeshInstance3D").MaterialOverride = GD.Load<Material>("TileColor.tres");
+				oldTileCollider.GetNode<MeshInstance3D>("MeshInstance3D").MaterialOverride = GD.Load<Material>("Resources/TileColor.tres");
 			}
 			oldTileCollider = tileCollider;
 			
 			
-			tileCollider.GetNode<MeshInstance3D>("MeshInstance3D").MaterialOverride = GD.Load<Material>("SelectedColor.tres");
+			tileCollider.GetNode<MeshInstance3D>("MeshInstance3D").MaterialOverride = GD.Load<Material>("Resources/SelectedColor.tres");
 			
 			Godot.Vector2[] neighbors = tileCollider.GetNeighbors();
 			// GD.Print("Neighbors: " + tileCollider.GetHexCoords());
-			foreach (Tile tile in GetTree().GetNodesInGroup("highlighted_tiles"))
+			foreach (Tile tile in GetTree().GetNodesInGroup("Resources/highlighted_tiles"))
 			{
 				try
 				{
 					tile.meshInstance.MaterialOverlay = null;
-					tile.RemoveFromGroup("highlighted_tiles");
+					tile.RemoveFromGroup("Resources/highlighted_tiles");
 				}
 				catch{}
 				
@@ -83,8 +83,8 @@ public partial class HexMap3d : Node3D
 				try
 				{
 					Tile tile = m[(int)neighbor.X, (int)neighbor.Y];
-					tile.SetTemporaryOverlay(GD.Load<Material>("NeighborColor.tres"));
-					tile.AddToGroup("highlighted_tiles");
+					tile.SetTemporaryOverlay(GD.Load<Material>("Resources/NeighborColor.tres"));
+					tile.AddToGroup("Resources/highlighted_tiles");
 				}
 				catch{}
 			}

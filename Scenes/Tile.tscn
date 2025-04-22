@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://mwntit0oa26a"]
 
-[ext_resource type="Script" uid="uid://cjulufnb7hd2b" path="res://Tile.cs" id="1_7jaxa"]
-[ext_resource type="CylinderMesh" uid="uid://d6rs6kq06lue" path="res://Tile.tres" id="1_14tbq"]
+[ext_resource type="Script" uid="uid://cjulufnb7hd2b" path="res://Scripts/Tile.cs" id="1_7jaxa"]
+[ext_resource type="CylinderMesh" uid="uid://d6rs6kq06lue" path="res://Resources/Tile.tres" id="1_14tbq"]
 
 [node name="StaticBody3D" type="StaticBody3D"]
 script = ExtResource("1_7jaxa")

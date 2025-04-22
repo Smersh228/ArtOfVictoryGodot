@@ -53,10 +53,10 @@ public partial class Tile : StaticBody3D
 	public override void _Ready()
 	{
 		meshInstance = GetNode<MeshInstance3D>("MeshInstance3D");
-		Mesh c = GD.Load<Mesh>("res://Tile.tres");
+		Mesh c = GD.Load<Mesh>("res://Resources/Tile.tres");
 		meshInstance.Mesh = c;
 		label = GetNode<Label3D>("CoordsLabel");
-		_tileScene = GD.Load<PackedScene>("res://unit.tscn");
+		_tileScene = GD.Load<PackedScene>("res://Scenes/unit.tscn");
 	}
 
 

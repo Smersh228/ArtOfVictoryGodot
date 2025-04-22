@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://ckar6ao6mw072"]
 
-[ext_resource type="Script" uid="uid://c6qmcipon53kh" path="res://Unit.cs" id="1_btf8p"]
-[ext_resource type="ArrayMesh" uid="uid://bfvl8ng3bdbyg" path="res://sk_sov_aircraft_po2.obj" id="2_ctwoc"]
+[ext_resource type="Script" uid="uid://c6qmcipon53kh" path="res://Scripts/Unit.cs" id="1_btf8p"]
+[ext_resource type="ArrayMesh" uid="uid://dxhojatwhq1cn" path="res://Models/sk_sov_aircraft_po2.obj" id="2_ctwoc"]
 
 [node name="Unit" type="Node3D"]
 script = ExtResource("1_btf8p")
