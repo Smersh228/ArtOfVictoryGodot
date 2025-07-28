@@ -1,0 +1,10 @@
+{
+	"po2": {
+		"id": "po2",
+		"model": "res://models/sk_sov_aircraft_po2.obj"
+	},
+	"pz2": {
+		"id": "pz2",
+		"model": "res://models/Panzer II Light Tank.obj"
+	}
+}

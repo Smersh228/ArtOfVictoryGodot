@@ -1,45 +1,91 @@
 using Godot;
+using Godot.Collections;
 using System;
-using System.Numerics;
+using System.IO;
+using System.Linq;
 
 public partial class HexMap3d : Node3D
 {
-	Tile[,] m;
-	Tile oldTileCollider = null;
-	OmniLight3D light = new OmniLight3D();
-	private PackedScene _tileScene = GD.Load<PackedScene>("res://Scenes/Tile.tscn");
+	[Export] int height = 10;
+	[Export] int width = 10;
+	private int _targetHeight = 0;
+	private Control _ui;
+	MeshGenerator meshGenerator;
 
-	// Called when the node enters the scene tree for the first time.
+	Tile[] tiles;
+	Material material; //ВРЕМЕННО
+	Material material1;
+	Material material2;
 	public override void _Ready()
 	{
-		m = new Tile[10,10];
-		AddChild(light);
+		material = GD.Load<Material>("res://resources/tile_color.tres"); //ВРЕМЕННО
+		material1 = GD.Load<Material>("res://resources/neighbor_color.tres");
+		material2 = GD.Load<Material>("res://resources/selected_color.tres");
 
-		for (int i = 0; i < 10; i++)
+
+		//Обработка UI
+		_ui = GetNode<Control>("MapEditorUI");
+		_ui.GetNode<Button>("HeightUpButton").Pressed += () =>
 		{
-			for (int j = 0; j < 10; j++)
+			if (_targetHeight < 15)
 			{
-				m[i,j] = _tileScene.Instantiate<Tile>();
-				m[i,j].Initialize(i, j);
-
-				m[i,j].Position = new Godot.Vector3(Convert.ToSingle(Math.Sqrt(3)) / 2 * (i + j % 2f / 2), -i/20f - j/20f, j * 3f / 4f);
-				AddChild(m[i,j]);
-				GD.Print(m[i,j].Position);
-				m[i,j].label.Text = m[i,j].GetHexCoords().ToString();
+				_targetHeight++;
 			}
-			
-			
+			_ui.GetNode<Label>("Label").Text = _targetHeight.ToString();
+			GD.Print(_targetHeight);
+		};
+		_ui.GetNode<Button>("HeightDownButton").Pressed += () =>
+		{
+			if (_targetHeight > 0)
+			{
+				_targetHeight--;
+			}
+			_ui.GetNode<Label>("Label").Text = _targetHeight.ToString();
+			GD.Print(_targetHeight);
+		};
+
+		Random random = new();
+
+		tiles = new Tile[height * width];
+		for (int y = 0; y < height; y++)//ВИТЯ, ТЫ ИДИОТ, X И Y ПЕРЕПУТАНЫ МЕСТАМИ, ПЕРЕПИСЫВАЙ СИСТЕМУ КООРДИНАТ НАХРЕН
+		{
+			for (int x = 0; x < width; x++)
+			{
+				Tile tile = new(x, y, (int)random.NextInt64(0,16), "flat"); //random.NextSingle() > 0.5 ? "flat" : "bushes"
+				if (x > 0)
+				{
+					// GD.Print(tiles[y * height + x - 1]);
+					// GD.Print(y * height + x - 1);
+					tile.SetNeighbor(HexDirection.W, tiles[y * width + x - 1]); //Сосед слева
+				}
+				if (y > 0)
+				{
+					if (y % 2 == 0) //чётная строка
+					{
+						tile.SetNeighbor(HexDirection.NE, tiles[(y - 1) * width + x]);
+						if (x > 0)
+						{
+							tile.SetNeighbor(HexDirection.NW, tiles[(y - 1) * width + x - 1]);
+						}
+					}
+					else //нечётная строка
+					{
+						tile.SetNeighbor(HexDirection.NW, tiles[(y - 1) * width + x]);
+						if ((x + 1) < width)
+						{
+							tile.SetNeighbor(HexDirection.NE, tiles[(y - 1) * width + x + 1]);
+						}
+					}
+				}
+				tiles[y * width + x] = tile;
+			}
+
 		}
-		m[5,5]._units[0] = new Unit();
-		m[5,5].AddUnit();
+		meshGenerator = GetNode<MeshGenerator>("Map/MeshGenerator");
+		meshGenerator.RegenerateMesh(tiles);
 	}
+	Vector2? oldCoords = null;
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-
-	}
-	
 	public override void _Input(InputEvent @event)
 	{
 		base._Input(@event);
@@ -52,53 +98,24 @@ public partial class HexMap3d : Node3D
 		parameters.From = rayOrigin;
 		parameters.To = rayEnd;
 		var intersection = spaceState.IntersectRay(parameters);
+
 		if (intersection.Count > 0)
 		{
-			var tileCollider = (Tile)intersection["collider"];
-			light.Position = tileCollider.Position + Godot.Vector3.Up;
-
-			if (tileCollider != oldTileCollider && oldTileCollider != null)
-			{
-				oldTileCollider.GetNode<MeshInstance3D>("MeshInstance3D").MaterialOverride = GD.Load<Material>("Resources/TileColor.tres");
-			}
-			oldTileCollider = tileCollider;
-			
-			
-			tileCollider.GetNode<MeshInstance3D>("MeshInstance3D").MaterialOverride = GD.Load<Material>("Resources/SelectedColor.tres");
-			
-			Godot.Vector2[] neighbors = tileCollider.GetNeighbors();
-			// GD.Print("Neighbors: " + tileCollider.GetHexCoords());
-			foreach (Tile tile in GetTree().GetNodesInGroup("Resources/highlighted_tiles"))
-			{
-				try
-				{
-					tile.meshInstance.MaterialOverlay = null;
-					tile.RemoveFromGroup("Resources/highlighted_tiles");
-				}
-				catch{}
-				
-			}
-			foreach (var neighbor in neighbors)
-			{
-				try
-				{
-					Tile tile = m[(int)neighbor.X, (int)neighbor.Y];
-					tile.SetTemporaryOverlay(GD.Load<Material>("Resources/NeighborColor.tres"));
-					tile.AddToGroup("Resources/highlighted_tiles");
-				}
-				catch{}
-			}
-
-			// Когда нужно сбросить
-			
-
-
-			// for (int i = 0; i < 6; i++)
+			Vector2 coords = HexMetrics.FromCoords(intersection["position"].As<Vector3>());
+			// meshGenerator.ColorHex(coords, material1); //Изменение материала
+			// // GD.Print(coords);
+			// if ((oldCoords != null) && (oldCoords != coords))
 			// {
-			// 	m[(int)neighbors[i].X, (int)neighbors[i].Y].GetNode<MeshInstance3D>("MeshInstance3D").MaterialOverlay = GD.Load<Material>("NeighborColor.tres");
+			// 	meshGenerator.ColorHex((Vector2)oldCoords, material);
 			// }
+			// oldCoords = coords;
 
+
+			if (@event.IsActionPressed("ui_mouse_click"))
+			{
+				Vector2 offsetCoords = HexMetrics.AxialToOffset(coords);
+				GD.Print(tiles[(int)offsetCoords.Y*10 + (int)offsetCoords.X].GetNeighbor(HexDirection.NW).GetHexCoords()); //КОСТЫЛЬНЫЕ КООРДИНАТЫ
+			}
 		}
-
 	}
 }

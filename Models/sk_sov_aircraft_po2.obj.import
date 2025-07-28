@@ -4,14 +4,14 @@ importer="wavefront_obj"
 importer_version=1
 type="Mesh"
 uid="uid://dxhojatwhq1cn"
-path="res://.godot/imported/sk_sov_aircraft_po2.obj-258af9b04e49c4236fd8b0ba9e3f69f8.mesh"
+path="res://.godot/imported/sk_sov_aircraft_po2.obj-d230702449e8c12da035ec2d4c8ac3fb.mesh"
 
 [deps]
 
-files=["res://.godot/imported/sk_sov_aircraft_po2.obj-258af9b04e49c4236fd8b0ba9e3f69f8.mesh"]
+files=["res://.godot/imported/sk_sov_aircraft_po2.obj-d230702449e8c12da035ec2d4c8ac3fb.mesh"]
 
-source_file="res://Models/sk_sov_aircraft_po2.obj"
-dest_files=["res://.godot/imported/sk_sov_aircraft_po2.obj-258af9b04e49c4236fd8b0ba9e3f69f8.mesh", "res://.godot/imported/sk_sov_aircraft_po2.obj-258af9b04e49c4236fd8b0ba9e3f69f8.mesh"]
+source_file="res://models/sk_sov_aircraft_po2.obj"
+dest_files=["res://.godot/imported/sk_sov_aircraft_po2.obj-d230702449e8c12da035ec2d4c8ac3fb.mesh", "res://.godot/imported/sk_sov_aircraft_po2.obj-d230702449e8c12da035ec2d4c8ac3fb.mesh"]
 
 [params]
 

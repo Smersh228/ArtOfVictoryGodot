@@ -1,0 +1,11 @@
+{
+    "flat":{
+        "material":"res://resources/tile_color.tres"
+    },
+    "bushes":{
+        "material":"res://resources/neighbor_color.tres"
+    },
+    "swamp":{
+
+    }
+}

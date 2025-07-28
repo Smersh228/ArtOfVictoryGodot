@@ -1,83 +1,75 @@
 using Godot;
 using System;
 
-public partial class Tile : StaticBody3D
+public partial class Tile
 {
-	public MeshInstance3D meshInstance;
-	public Unit[] _units;
-	private Material _originalMaterial;
-	private Material _originalOverlay;
-	private PackedScene _tileScene;
-	public void StoreOriginalMaterials()
+	private int _x, _y;  //квадратные координаты
+	public int X
 	{
-		_originalMaterial = meshInstance.MaterialOverride;
-		_originalOverlay = meshInstance.MaterialOverlay;
+		get { return _x; }
 	}
-	
-	public void RestoreMaterials()
+	public int Y
 	{
-		meshInstance.MaterialOverride = _originalMaterial;
-		meshInstance.MaterialOverlay = _originalOverlay;
+		get { return _y; }
+	}
+	private int _height;
+	public int Height
+	{
+		get { return _height; }
+		set { if ((0 <= value) && (value <= 15)) _height = value; }
+	}
+	private string _tileType;
+	public string Type
+	{
+		get { return _tileType; } // Пока что Readonly. ПОМЕНЯТЬ!
+	}
+	public bool IsActiveTile
+	{
+		get;
+		private set;
 	}
 
-	public void SetTemporaryOverlay(Material tempMaterial)
-	{
-		meshInstance.MaterialOverlay = tempMaterial;
-	}
+	private Tile[] neighbors = new Tile[6];
 
-
-	private int x, y;
-	public Label3D label;
-	public void Initialize(int x, int y)
+	public Tile(int x, int y, int height, string tileType)
 	{
-		this.x = x;
-		this.y = y;
-		_units = new Unit[3];
+		_x = x;
+		_y = y;
+		Height = height;
+		_tileType = tileType;
 	}
 	public Vector3 GetHexCoords()
 	{
-		return new Vector3(x - y / 2, y, - (x - y / 2) - y);
+		return new Vector3(_x - _y / 2, _y, -(_x - _y / 2) - _y);
 	}
-	public Vector2[] GetNeighbors()
+	public Vector3 GetWorldPosition()
 	{
-		return new Vector2[] {
-			new Vector2(x+1,y),
-			new Vector2(x + y % 2,y+1),
-			new Vector2(x-1+ y % 2,y+1),
-			new Vector2(x-1,y),
-			new Vector2(x + y % 2 - 1,y-1),
-			new Vector2(x + 1 + y % 2 - 1,y-1)
-		};
+		Vector3 pos = new();
+		pos.X = (X + Y % 2f / 2) * HexMetrics.innerRadius * 2;
+		pos.Y = Height / 16f;
+		pos.Z = Y * HexMetrics.outerRadius * 3 / 2;
+		return pos;
 	}
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+	public Vector2[] GetNeighborsCoords()
 	{
-		meshInstance = GetNode<MeshInstance3D>("MeshInstance3D");
-		Mesh c = GD.Load<Mesh>("res://Resources/Tile.tres");
-		meshInstance.Mesh = c;
-		label = GetNode<Label3D>("CoordsLabel");
-		_tileScene = GD.Load<PackedScene>("res://Scenes/unit.tscn");
+		return [
+			new Vector2(_x+1,_y),
+			new Vector2(_x + _y % 2,_y+1),
+			new Vector2(_x-1+ _y % 2,_y+1),
+			new Vector2(_x-1,_y),
+			new Vector2(_x + _y % 2 - 1,_y-1),
+			new Vector2(_x + 1 + _y % 2 - 1,_y-1)
+		];
 	}
 
-
-	public void AddUnit()
+	public Tile GetNeighbor(HexDirection direction)
 	{
-
-		for (int i = 0; i < 3; i ++)
-		{
-			if (_units[i] != null);
-			{
-			_units[i] = _tileScene.Instantiate<Unit>();
-			AddChild(_units[i]);	
-			}
-			
-		}
+		return neighbors[(int)direction];
 	}
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	public void SetNeighbor(HexDirection direction, Tile cell)
 	{
-
+		neighbors[(int)direction] = cell;
+		cell.neighbors[(int)direction.Opposite()] = this;
 	}
 
-	
 }

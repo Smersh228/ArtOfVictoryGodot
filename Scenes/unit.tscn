@@ -1,11 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://ckar6ao6mw072"]
+[gd_scene load_steps=4 format=3 uid="uid://ckar6ao6mw072"]
 
-[ext_resource type="Script" uid="uid://c6qmcipon53kh" path="res://Scripts/Unit.cs" id="1_btf8p"]
-[ext_resource type="ArrayMesh" uid="uid://dxhojatwhq1cn" path="res://Models/sk_sov_aircraft_po2.obj" id="2_ctwoc"]
+[ext_resource type="Script" uid="uid://c6qmcipon53kh" path="res://scripts/Unit.cs" id="1_btf8p"]
+[ext_resource type="ArrayMesh" uid="uid://dxhojatwhq1cn" path="res://models/sk_sov_aircraft_po2.obj" id="2_k673f"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1jvru"]
 
 [node name="Unit" type="Node3D"]
 script = ExtResource("1_btf8p")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(-0.000506094, 0, 0.000862478, 0, 0.001, 0, -0.000862478, 0, -0.000506094, 0, 0.439558, 0)
-mesh = ExtResource("2_ctwoc")
+transform = Transform3D(-0.000506094, 0, 0.000862478, 0, 0.001, 0, -0.000862478, 0, -0.000506094, 0, 0, 0)
+mesh = ExtResource("2_k673f")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(-0.126524, 0, 0.21562, 0, 0.25, 0, -0.21562, 0, -0.126524, 0, 0.046357, 0)
+shape = SubResource("BoxShape3D_1jvru")
