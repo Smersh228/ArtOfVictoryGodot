@@ -5,13 +5,13 @@ public static class HexMetrics
 	public const float outerRadius = 1f;
 	public const float innerRadius = outerRadius * 0.866025404f;
 	public static Vector3[] Corners = {
-		new Vector3(0f, 0f, outerRadius),
-		new Vector3(-innerRadius, 0f, 0.5f * outerRadius),
-		new Vector3(-innerRadius, 0f, -0.5f * outerRadius),
 		new Vector3(0f, 0f, -outerRadius),
 		new Vector3(innerRadius, 0f, -0.5f * outerRadius),
 		new Vector3(innerRadius, 0f, 0.5f * outerRadius),
-		new Vector3(0f, 0f, outerRadius)
+		new Vector3(0f, 0f, outerRadius),
+		new Vector3(-innerRadius, 0f, 0.5f * outerRadius),
+		new Vector3(-innerRadius, 0f, -0.5f * outerRadius),
+		new Vector3(0f, 0f, -outerRadius)
 	};
 
 	public static Vector2I FromCoords(Vector3 position)
@@ -50,6 +50,25 @@ public static class HexMetrics
 	{
 		return new(coords.X + (int)(coords.Y / 2), coords.Y);
 	}
+	public static Vector3 RotateVector(Vector3 vector, float degrees)
+	{
+		return vector.Rotated(Vector3.Down, Mathf.DegToRad(degrees));
+	}
+	public static Vector3 Intersect(float outerPoint, float innerPoint, bool leftSide, int rotation)
+	{
+		float distance = outerPoint - innerPoint;
+		// Vector3 leftWaterSolidBorder = new Vector3(solidWidth / 2, 0, -solidWidth * (float)(Math.Sqrt(3) / 2)) + waterRadius * HexMetrics.Corners[0];
+
+		if (leftSide)
+		{
+			return (Corners[0] * innerPoint + new Vector3(distance / 2, 0, -distance * Mathf.Sqrt(3) / 2)).Rotated(Vector3.Down, Mathf.DegToRad(rotation));
+		}
+		else
+		{
+			return (Corners[0] * innerPoint + new Vector3(-distance / 2, 0, -distance * Mathf.Sqrt(3) / 2)).Rotated(Vector3.Down, Mathf.DegToRad(rotation + 60));
+		}
+	}
+
 }
 
 public enum HexDirection {

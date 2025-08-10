@@ -19,5 +19,13 @@
     "stone":
     {
         "color":"#000000"
+    },
+    "riverBottom":
+    {
+        "color":"#313238"   
+    },
+    "sand":
+    {
+        "color":"#b59a6a"
     }
 }

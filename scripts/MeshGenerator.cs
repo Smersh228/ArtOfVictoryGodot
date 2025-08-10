@@ -1,26 +1,19 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-
-public class MeshData
-{
-	public List<Vector3> Vertices = [];
-	public List<Vector3> Normals = [];
-	public List<int> Indices = [];
-	public List<Vector2> UVs = [];
-
-}
 
 public partial class MeshGenerator : MeshInstance3D
 {
 	Godot.Collections.Array surfaceArray = [];
 	ArrayMesh arrMesh;
 	CollisionShape3D collision;
-	float solidRadius = 0.75f;
-	Dictionary<string, Color> colors = new() {};
+	float solidRadius = 0.8f;
+	float waterRadius = 0.5f;
+	float waterBottomRadius = 0.3f;
+	float waterDepth = 0.2f;
+	Dictionary<string, Color> colors = new() { };
 	SurfaceTool st;
-
+	List<string> tileTypes;
 	public override void _Ready()
 	{
 		base._Ready();
@@ -28,7 +21,6 @@ public partial class MeshGenerator : MeshInstance3D
 		{
 			colors.Add(tile.Key, new(HexTileData.GlobalTileData[tile.Key]["color"].ToString()));
 		}
-		
 	}
 
 	private void AddTriangle(Vector3 v1, Color c1, Vector3 v2, Color c2, Vector3 v3, Color c3) //Возможна оптимизация, но пошла она нафиг, я устал, а переполнения всё равно не будет
@@ -50,18 +42,29 @@ public partial class MeshGenerator : MeshInstance3D
 
 	public void AddHex(Vector3 center, Color color)
 	{
+		float radius = solidRadius;
 		for (int i = 0; i < 6; i++)
 		{
-			AddTriangle(center, color, center + HexMetrics.Corners[i] * solidRadius, color, center + HexMetrics.Corners[i + 1] * solidRadius, color);
+			AddTriangle(center, color, center + HexMetrics.Corners[i] * radius, color, center + HexMetrics.Corners[i + 1] * radius, color);
 		}
 	}
-
+	public void AddHex(Vector3 center, Color color, float radius)
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			AddTriangle(center, color, center + HexMetrics.Corners[i] * radius, color, center + HexMetrics.Corners[i + 1] * radius, color);
+		}
+	}
 	public void AddRectangle(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, Color eastColor, Color westColor)
 	{
 		AddTriangle(v1, eastColor, v2, westColor, v3, westColor);
 		AddTriangle(v1, eastColor, v3, westColor, v4, eastColor);
 	}
-
+	public void AddRectangle(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, Color c1, Color c2, Color c3, Color c4)
+	{
+		AddTriangle(v1, c1, v2, c2, v3, c3);
+		AddTriangle(v1, c1, v3, c3, v4, c4);
+	}
 
 	public void RegenerateMesh(Tile[] tiles)
 	{
@@ -81,80 +84,25 @@ public partial class MeshGenerator : MeshInstance3D
 
 		collision = GetParent().GetNode<CollisionShape3D>("CollisionShape3D");
 
-		List<string> tileTypes = new();
+		tileTypes = new();
 
 
 		foreach (Tile tile in tiles)
 		{
-			Vector3 tilePosition = tile.GetWorldPosition();
-			if (!tileTypes.Contains(tile.Type)) tileTypes.Add(tile.Type);
-
-			AddHex(tilePosition, colors[tile.Type]); // основная поверхность
-
-			if (tile.GetNeighbor(HexDirection.NE) != null) // скаты
+			if (!tile.HasRiver)
 			{
-				AddRectangle(
-					tilePosition + HexMetrics.Corners[3] * solidRadius,
-					tile.GetNeighbor(HexDirection.NE).GetWorldPosition() + HexMetrics.Corners[1] * solidRadius,
-					tile.GetNeighbor(HexDirection.NE).GetWorldPosition() + HexMetrics.Corners[0] * solidRadius,
-					tilePosition + HexMetrics.Corners[4] * solidRadius,
-					colors[tile.Type],
-					colors[tile.GetNeighbor(HexDirection.NE).Type]
-					);
+				GenerateFlatHex(tile);
 			}
-			if (tile.GetNeighbor(HexDirection.E) != null)
+			else
 			{
-				AddRectangle(
-					tilePosition + HexMetrics.Corners[4] * solidRadius,
-					tile.GetNeighbor(HexDirection.E).GetWorldPosition() + HexMetrics.Corners[2] * solidRadius,
-					tile.GetNeighbor(HexDirection.E).GetWorldPosition() + HexMetrics.Corners[1] * solidRadius,
-					tilePosition + HexMetrics.Corners[5] * solidRadius,
-					colors[tile.Type],
-					colors[tile.GetNeighbor(HexDirection.E).Type]
-					);
+				GenerateRiverHex(tile);
 			}
-			if (tile.GetNeighbor(HexDirection.SE) != null)
-			{
-				AddRectangle(
-					tilePosition + HexMetrics.Corners[5] * solidRadius,
-					tile.GetNeighbor(HexDirection.SE).GetWorldPosition() + HexMetrics.Corners[3] * solidRadius,
-					tile.GetNeighbor(HexDirection.SE).GetWorldPosition() + HexMetrics.Corners[2] * solidRadius,
-					tilePosition + HexMetrics.Corners[6] * solidRadius,
-					colors[tile.Type],
-					colors[tile.GetNeighbor(HexDirection.SE).Type]
-					);
-			}
-
-			if ((tile.GetNeighbor(HexDirection.NE) != null) && (tile.GetNeighbor(HexDirection.E) != null)) // треугольники
-			{
-				AddTriangle(
-					tilePosition + HexMetrics.Corners[4] * solidRadius,
-					colors[tile.Type],
-					tile.GetNeighbor(HexDirection.NE).GetWorldPosition() + HexMetrics.Corners[0] * solidRadius,
-					colors[tile.GetNeighbor(HexDirection.NE).Type],
-					tile.GetNeighbor(HexDirection.E).GetWorldPosition() + HexMetrics.Corners[2] * solidRadius,
-					colors[tile.GetNeighbor(HexDirection.E).Type]
-				);
-			}
-			if ((tile.GetNeighbor(HexDirection.SE) != null) && (tile.GetNeighbor(HexDirection.E) != null))
-			{
-				AddTriangle(
-					tilePosition + HexMetrics.Corners[5] * solidRadius,
-					colors[tile.Type],
-					tile.GetNeighbor(HexDirection.E).GetWorldPosition() + HexMetrics.Corners[1] * solidRadius,
-					colors[tile.GetNeighbor(HexDirection.E).Type],
-					tile.GetNeighbor(HexDirection.SE).GetWorldPosition() + HexMetrics.Corners[3] * solidRadius,
-					colors[tile.GetNeighbor(HexDirection.SE).Type]
-				);
-			}
-
 		}
 
 		st.GenerateNormals();
 		st.GenerateTangents();
 
 		st.Commit(arrMesh);
-		
 
 		collision.Shape = Mesh.CreateTrimeshShape();
 
@@ -162,8 +110,188 @@ public partial class MeshGenerator : MeshInstance3D
 		GD.Print("Finish generation");
 	}
 
-	public void ColorHex(Vector2 coords, Material material)
+	public void GenerateFlatHex(Tile tile)
 	{
-		
+		Vector3 tilePosition = tile.GetWorldPosition();
+		if (!tileTypes.Contains(tile.Type)) tileTypes.Add(tile.Type);
+
+		AddHex(tilePosition, colors[tile.Type]); // основная поверхность
+
+		for (int i = 0; i < 3; i++) // четырёхугольники к восточным соседям
+		{
+			if ((tile.GetNeighbor((HexDirection)i) == null) || tile.GetNeighbor((HexDirection)i).HasRiver)
+			{
+				continue;
+			}
+
+			AddRectangle(
+				tilePosition + HexMetrics.Corners[i] * solidRadius,
+				tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Corners[(i + 4) % 6] * solidRadius,
+				tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Corners[i + 3] * solidRadius,
+				tilePosition + HexMetrics.Corners[i + 1] * solidRadius,
+				colors[tile.Type],
+				colors[tile.GetNeighbor((HexDirection)i).Type]
+			);
+
+		}
+
+		for (int i = 0; i < 2; i++) // треугольники к восточным соседям
+		{
+			if ((tile.GetNeighbor((HexDirection)i) == null) || (tile.GetNeighbor((HexDirection)i + 1) == null))
+			{
+				continue;
+			}
+			AddTriangle(
+				tilePosition + HexMetrics.Corners[i + 1] * solidRadius,
+				colors[tile.Type],
+				tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Corners[i + 3] * solidRadius,
+				colors[tile.GetNeighbor((HexDirection)i).Type],
+				tile.GetNeighbor((HexDirection)i + 1).GetWorldPosition() + HexMetrics.Corners[(i + 5) % 6] * solidRadius,
+				colors[tile.GetNeighbor((HexDirection)i + 1).Type]
+			);
+		}
+	}
+
+	public void GenerateRiverHex(Tile tile)
+	{
+		Vector3 tilePosition = tile.GetWorldPosition();
+		if (!tileTypes.Contains(tile.Type)) tileTypes.Add(tile.Type);
+
+		for (int i = 0; i < 6; i++) // i = HexDirection // i = HexMetrics.Corners
+		{
+			if (tile.GetNeighbor((HexDirection)i) == null)
+			{
+				continue;
+			}
+
+			float rotation = Mathf.DegToRad(i * 60);
+
+			if (!tile.GetNeighbor((HexDirection)i).HasRiver) //Если нет реки, обычный четырёхугольник 
+			{
+				AddRectangle(   //СКАТ / SLOPE
+					tilePosition + HexMetrics.Corners[i] * solidRadius,
+					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Corners[(i + 4) % 6] * solidRadius,
+					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Corners[(i + 3) % 6] * solidRadius,
+					tilePosition + HexMetrics.Corners[(i + 1) % 6] * solidRadius,
+					colors[tile.Type],
+					colors[tile.GetNeighbor((HexDirection)i).Type]
+				);
+
+				AddRectangle(   //ЗЕМЛЯ / SOLID
+					tilePosition + HexMetrics.Corners[i] * waterRadius,
+					tilePosition + HexMetrics.Corners[i] * solidRadius,
+					tilePosition + HexMetrics.Corners[(i + 1) % 6] * solidRadius,
+					tilePosition + HexMetrics.Corners[(i + 1) % 6] * waterRadius,
+					colors["sand"],
+					colors[tile.Type]
+				);
+
+				AddRectangle(   //БЕРЕГ / BANK
+					tilePosition + HexMetrics.Corners[i] * waterBottomRadius + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Corners[i] * waterRadius,
+					tilePosition + HexMetrics.Corners[(i + 1) % 6] * waterRadius,
+					tilePosition + HexMetrics.Corners[(i + 1) % 6] * waterBottomRadius + Vector3.Down * waterDepth,
+					colors["riverBottom"],
+					colors["sand"]
+				);
+
+			}
+			else //Если сосед - РЕКА
+			{
+				AddTriangle(    //ЗЕМЛЯ / SOLID	//Мб добавить перегрузку с одним цветом?
+					tilePosition + HexMetrics.Corners[i] * waterRadius,
+					colors["sand"],
+					tilePosition + HexMetrics.Corners[i] * solidRadius,
+					colors[tile.Type],
+					tilePosition + HexMetrics.Intersect(solidRadius, waterRadius, true, i*60),
+					colors["sand"]
+				);
+				AddTriangle(    //ЗЕМЛЯ / SOLID	//Мб добавить перегрузку с одним цветом?
+					tilePosition + HexMetrics.Intersect(solidRadius, waterRadius, false, i*60),
+					colors["sand"],
+					tilePosition + HexMetrics.Corners[i + 1] * solidRadius,
+					colors[tile.Type],
+					tilePosition + HexMetrics.Corners[i + 1] * waterRadius,
+					colors["sand"]
+				);
+				AddRectangle(   //ЗЕМЛЯ / SOLID
+					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Corners[(i + 4) % 6] * solidRadius,
+					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Intersect(solidRadius, waterRadius, false, i*60 + 180),
+					tilePosition + HexMetrics.Intersect(solidRadius, waterRadius, true, i*60),
+					tilePosition + HexMetrics.Corners[i] * solidRadius,
+					colors[tile.GetNeighbor((HexDirection)i).Type],
+					colors["sand"],
+					colors["sand"],
+					colors[tile.Type]
+				);
+
+				AddRectangle(   //БЕРЕГ / BANK
+					tilePosition + HexMetrics.Intersect(solidRadius, waterRadius, true, i*60),
+					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, true, i*60) + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Corners[i] * waterBottomRadius + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Corners[i] * waterRadius,
+					colors["sand"],
+					colors["riverBottom"]
+				);
+				AddRectangle(   //БЕРЕГ / BANK
+					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, false, i*60) + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Intersect(solidRadius, waterRadius, false, i*60),
+					tilePosition + HexMetrics.Corners[i+1] * waterRadius,
+					tilePosition + HexMetrics.Corners[i+1] * waterBottomRadius + Vector3.Down * waterDepth,
+					colors["riverBottom"],
+					colors["sand"]
+
+				);
+				AddRectangle(   //БЕРЕГ / BANK
+					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Intersect(solidRadius, waterRadius, false, i*60 + 180),
+					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Intersect(solidRadius, waterBottomRadius, false, i*60 + 180) + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, true, i*60) + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Intersect(solidRadius, waterRadius, true, i*60),
+					colors["sand"],
+					colors["riverBottom"]
+				);
+				
+
+
+				AddRectangle(   //ДНО / BOTTOM
+					tilePosition + HexMetrics.Corners[i] * waterBottomRadius + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, true, i*60) + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, false, i*60) + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Corners[i+1] * waterBottomRadius + Vector3.Down * waterDepth,
+					colors["riverBottom"],
+					colors["riverBottom"]
+				);
+				AddRectangle(   //ДНО / BOTTOM // ОТРИСОВЫВАЕТСЯ ДВАЖДЫ В ОДНОЙ ПОЗИЦИИ
+					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, true, i*60) + Vector3.Down * waterDepth,
+					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Intersect(solidRadius, waterBottomRadius, false, i*60 + 180) + Vector3.Down * waterDepth,
+					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Intersect(solidRadius, waterBottomRadius, true, i*60 + 180) + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, false, i*60) + Vector3.Down * waterDepth,
+					colors["riverBottom"],
+					colors["riverBottom"]
+				);
+
+			}
+
+			AddHex(tilePosition + Vector3.Down * waterDepth, colors["riverBottom"], waterBottomRadius); //Дно
+		}
+
+
+
+		//ДУБЛИРУЮЩИЙСЯ КОД С GenerateFlatHex(Tile tile)
+		for (int i = 0; i < 2; i++) // треугольники к восточным соседям
+		{
+			if ((tile.GetNeighbor((HexDirection)i) == null) || (tile.GetNeighbor((HexDirection)i + 1) == null))
+			{
+				continue;
+			}
+			AddTriangle(
+				tilePosition + HexMetrics.Corners[i + 1] * solidRadius,
+				colors[tile.Type],
+				tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Corners[i + 3] * solidRadius,
+				colors[tile.GetNeighbor((HexDirection)i).Type],
+				tile.GetNeighbor((HexDirection)i + 1).GetWorldPosition() + HexMetrics.Corners[(i + 5) % 6] * solidRadius,
+				colors[tile.GetNeighbor((HexDirection)i + 1).Type]
+			);
+		}
 	}
 }

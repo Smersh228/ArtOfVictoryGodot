@@ -16,8 +16,6 @@ points = PackedVector3Array(-0.00131392, 0.0624939, -0.75, 0.865856, 0, 0.749119
 
 [node name="HexMap3D" type="Node3D"]
 script = ExtResource("1_5gx8y")
-height = 16
-width = 16
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.494957, 0.071799, -0.865946, 0.504799, 0.787395, 0.353819, 0.707245, -0.612253, 0.353483, 0, 11.9041, 0)

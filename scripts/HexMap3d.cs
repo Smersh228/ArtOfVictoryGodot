@@ -8,7 +8,7 @@ public partial class HexMap3d : Node3D
 {
 	[Export] int height = 10;
 	[Export] int width = 10;
-	private int _targetHeight = 0;
+	private int _targetHeight = 10;
 	private Control _ui;
 	MeshGenerator meshGenerator;
 
@@ -18,6 +18,7 @@ public partial class HexMap3d : Node3D
 	{
 		//Обработка UI
 		_ui = GetNode<Control>("MapEditorUI");
+		_ui.GetNode<Label>("Label").Text = _targetHeight.ToString();
 		_ui.GetNode<Button>("HeightUpButton").Pressed += () =>
 		{
 			if (_targetHeight < 15)
@@ -106,6 +107,7 @@ public partial class HexMap3d : Node3D
 				{
 					clickedTile.Type = _targetType; 
 				}
+				clickedTile.ChangeRiver();
 				meshGenerator.RegenerateMesh(tiles);
 
 			}
