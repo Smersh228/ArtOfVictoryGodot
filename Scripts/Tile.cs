@@ -21,12 +21,22 @@ public partial class Tile
 	private string _tileType;
 	public string Type
 	{
-		get { return _tileType; } // Пока что Readonly. ПОМЕНЯТЬ!
+		get { return _tileType; }
+		set { _tileType = value; } //Добавить проверку на валидный тип
 	}
 	public bool IsActiveTile
 	{
 		get;
 		private set;
+	}
+	public bool HasRiver
+	{
+		get;
+		private set;
+	}
+	public void ChangeRiver()
+	{
+		HasRiver = !HasRiver;
 	}
 
 	private Tile[] neighbors = new Tile[6];

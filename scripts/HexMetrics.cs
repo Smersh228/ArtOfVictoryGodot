@@ -14,7 +14,7 @@ public static class HexMetrics
 		new Vector3(0f, 0f, outerRadius)
 	};
 
-	public static Vector2 FromCoords(Vector3 position)
+	public static Vector2I FromCoords(Vector3 position)
 	{
 		float x = position.X / (innerRadius * 2f);
 		float y = -x;
@@ -46,9 +46,9 @@ public static class HexMetrics
 
 		return new(iX, iZ);
 	}
-	public static Vector2 AxialToOffset(Vector2 coords)
+	public static Vector2I AxialToOffset(Vector2I coords)
 	{
-		return new(coords.X + (coords.Y / 2), coords.Y);
+		return new(coords.X + (int)(coords.Y / 2), coords.Y);
 	}
 }
 

@@ -14,9 +14,9 @@ public partial class HexTileData : Node
         string json_string = File.ReadAllText("tiles.json");
 		Json json = new();
 		Error error = json.Parse(json_string);
-		if (error == Error.Ok)
-		{
-			GlobalTileData = json.Data.AsGodotDictionary<string, Dictionary<string, Variant>>();
+        if (error == Error.Ok)
+        {
+            GlobalTileData = json.Data.AsGodotDictionary<string, Dictionary<string, Variant>>();
 		}
     }
 }

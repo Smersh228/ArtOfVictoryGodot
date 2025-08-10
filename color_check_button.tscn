@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3 uid="uid://dq7wcr5ufw3ot"]
+
+[ext_resource type="StyleBox" uid="uid://xukackkix780" path="res://resources/ButtonThemes/color_chek_button_pressed.tres" id="1_ia4pn"]
+[ext_resource type="Script" uid="uid://doe0wi8fd6r3t" path="res://ColorCheckButton.cs" id="1_powa6"]
+[ext_resource type="StyleBox" uid="uid://cykajtkdrbl7n" path="res://resources/ButtonThemes/color_check_button_normal.tres" id="2_0d426"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_powa6"]
+
+[node name="ColorCheckButton" type="Button"]
+anchors_preset = -1
+anchor_right = 0.028
+anchor_bottom = 0.049
+offset_right = -0.255997
+offset_bottom = 0.247999
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/pressed = ExtResource("1_ia4pn")
+theme_override_styles/normal = ExtResource("2_0d426")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_powa6")
+script = ExtResource("1_powa6")

@@ -13,16 +13,9 @@ public partial class HexMap3d : Node3D
 	MeshGenerator meshGenerator;
 
 	Tile[] tiles;
-	Material material; //ВРЕМЕННО
-	Material material1;
-	Material material2;
+	string _targetType;
 	public override void _Ready()
 	{
-		material = GD.Load<Material>("res://resources/tile_color.tres"); //ВРЕМЕННО
-		material1 = GD.Load<Material>("res://resources/neighbor_color.tres");
-		material2 = GD.Load<Material>("res://resources/selected_color.tres");
-
-
 		//Обработка UI
 		_ui = GetNode<Control>("MapEditorUI");
 		_ui.GetNode<Button>("HeightUpButton").Pressed += () =>
@@ -44,18 +37,18 @@ public partial class HexMap3d : Node3D
 			GD.Print(_targetHeight);
 		};
 
+		
+
 		Random random = new();
 
 		tiles = new Tile[height * width];
-		for (int y = 0; y < height; y++)//ВИТЯ, ТЫ ИДИОТ, X И Y ПЕРЕПУТАНЫ МЕСТАМИ, ПЕРЕПИСЫВАЙ СИСТЕМУ КООРДИНАТ НАХРЕН
+		for (int y = 0; y < height; y++)
 		{
 			for (int x = 0; x < width; x++)
 			{
-				Tile tile = new(x, y, (int)random.NextInt64(0,16), "flat"); //random.NextSingle() > 0.5 ? "flat" : "bushes"
+				Tile tile = new(x, y, (int)random.NextInt64(0, 16), random.NextSingle() > 0.5 ? "flat" : "bushes");
 				if (x > 0)
 				{
-					// GD.Print(tiles[y * height + x - 1]);
-					// GD.Print(y * height + x - 1);
 					tile.SetNeighbor(HexDirection.W, tiles[y * width + x - 1]); //Сосед слева
 				}
 				if (y > 0)
@@ -101,21 +94,26 @@ public partial class HexMap3d : Node3D
 
 		if (intersection.Count > 0)
 		{
-			Vector2 coords = HexMetrics.FromCoords(intersection["position"].As<Vector3>());
-			// meshGenerator.ColorHex(coords, material1); //Изменение материала
-			// // GD.Print(coords);
-			// if ((oldCoords != null) && (oldCoords != coords))
-			// {
-			// 	meshGenerator.ColorHex((Vector2)oldCoords, material);
-			// }
-			// oldCoords = coords;
+			Vector2I coords = HexMetrics.FromCoords(intersection["position"].As<Vector3>()); //Получение координат гекса из коорд пересечения рейкаста
 
-
-			if (@event.IsActionPressed("ui_mouse_click"))
+			if (@event.IsActionPressed("left_mouse_click"))
 			{
-				Vector2 offsetCoords = HexMetrics.AxialToOffset(coords);
-				GD.Print(tiles[(int)offsetCoords.Y*10 + (int)offsetCoords.X].GetNeighbor(HexDirection.NW).GetHexCoords()); //КОСТЫЛЬНЫЕ КООРДИНАТЫ
+				Vector2I offsetCoords = HexMetrics.AxialToOffset(coords);
+				Tile clickedTile = tiles[offsetCoords.Y * height + offsetCoords.X];
+				clickedTile.Height = _targetHeight;
+
+				if (_targetType != null)
+				{
+					clickedTile.Type = _targetType; 
+				}
+				meshGenerator.RegenerateMesh(tiles);
+
 			}
 		}
+	}
+
+	public void ChangeColor(string type)
+	{
+		_targetType = type;
 	}
 }

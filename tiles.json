@@ -1,11 +1,23 @@
 {
     "flat":{
-        "material":"res://resources/tile_color.tres"
+        "color":"#5da130"
     },
     "bushes":{
-        "material":"res://resources/neighbor_color.tres"
+        "color":"#228b22"
     },
     "swamp":{
-
+        "color":"#8A9A5B"
+    },
+    "snow":
+    {
+        "color":"#fffafa"
+    },
+    "rock":
+    {
+        "color":"#676767"
+    },
+    "stone":
+    {
+        "color":"#000000"
     }
 }

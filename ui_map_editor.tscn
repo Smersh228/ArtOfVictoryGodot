@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://cmgqpimf3y28r"]
+[gd_scene load_steps=2 format=3 uid="uid://cmgqpimf3y28r"]
+
+[ext_resource type="Script" uid="uid://dn3mg3hlt4etu" path="res://UIMapEditor.cs" id="1_ufqta"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -7,29 +9,38 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_ufqta")
 
 [node name="HeightDownButton" type="Button" parent="."]
 layout_mode = 0
-offset_left = 10.0
-offset_top = 7.0
-offset_right = 41.0
-offset_bottom = 38.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 40.0
+offset_bottom = 40.0
 toggle_mode = true
 text = "-"
 
 [node name="HeightUpButton" type="Button" parent="."]
 layout_mode = 0
-offset_left = 49.0
-offset_top = 7.0
+offset_left = 48.0
+offset_top = 8.0
 offset_right = 80.0
-offset_bottom = 38.0
+offset_bottom = 40.0
 toggle_mode = true
 text = "+"
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 0
-offset_left = 97.0
-offset_top = 10.0
-offset_right = 143.0
-offset_bottom = 33.0
+offset_left = 96.0
+offset_top = 12.0
+offset_right = 142.0
+offset_bottom = 36.0
 text = "1"
+
+[node name="Container" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 140.0
+offset_top = 8.0
+offset_right = 172.0
+offset_bottom = 40.0
+theme_override_constants/separation = 4
