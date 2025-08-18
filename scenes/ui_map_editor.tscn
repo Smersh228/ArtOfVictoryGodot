@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://cmgqpimf3y28r"]
+[gd_scene load_steps=3 format=3 uid="uid://cmgqpimf3y28r"]
 
-[ext_resource type="Script" uid="uid://dn3mg3hlt4etu" path="res://UIMapEditor.cs" id="1_ufqta"]
+[ext_resource type="Theme" uid="uid://bi0lb256k2le0" path="res://resources/default_theme.tres" id="1_mtnng"]
+[ext_resource type="Script" uid="uid://dn3mg3hlt4etu" path="res://scripts/UIMapEditor.cs" id="1_ufqta"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -9,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_mtnng")
 script = ExtResource("1_ufqta")
 
 [node name="HeightDownButton" type="Button" parent="."]
@@ -44,3 +46,21 @@ offset_top = 8.0
 offset_right = 172.0
 offset_bottom = 40.0
 theme_override_constants/separation = 4
+
+[node name="ChangeHeightButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 46.0
+offset_right = 146.0
+offset_bottom = 77.0
+toggle_mode = true
+text = "Изменить высоту"
+
+[node name="HasRiverButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 84.0
+offset_right = 54.0
+offset_bottom = 115.0
+toggle_mode = true
+text = "Река"

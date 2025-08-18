@@ -6,7 +6,7 @@ public partial class UIMapEditor : Control
 {
 	[Signal]
 	public delegate void ColorButtonChangedEventHandler(string type);
-	PackedScene colorButton = GD.Load<PackedScene>("res://color_check_button.tscn");
+	PackedScene colorButton = GD.Load<PackedScene>("res://scenes/color_check_button.tscn");
 	private ButtonGroup _colorButtons;
 	public override void _Ready()
 	{

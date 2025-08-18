@@ -9,6 +9,8 @@ public partial class HexMap3d : Node3D
 	[Export] int height = 10;
 	[Export] int width = 10;
 	private int _targetHeight = 10;
+	private bool _tileHasRiver;
+	private bool _changeTileHeight;
 	private Control _ui;
 	MeshGenerator meshGenerator;
 
@@ -36,6 +38,14 @@ public partial class HexMap3d : Node3D
 			}
 			_ui.GetNode<Label>("Label").Text = _targetHeight.ToString();
 			GD.Print(_targetHeight);
+		};
+		_ui.GetNode<Button>("HasRiverButton").Toggled += (hasRiver) =>
+		{
+			_tileHasRiver = hasRiver;
+		};
+		_ui.GetNode<Button>("ChangeHeightButton").Toggled += (changeHeight) =>
+		{
+			_changeTileHeight = changeHeight;
 		};
 
 		
@@ -101,13 +111,16 @@ public partial class HexMap3d : Node3D
 			{
 				Vector2I offsetCoords = HexMetrics.AxialToOffset(coords);
 				Tile clickedTile = tiles[offsetCoords.Y * height + offsetCoords.X];
-				clickedTile.Height = _targetHeight;
 
+				if (_changeTileHeight)
+				{
+					clickedTile.Height = _targetHeight;
+				}
 				if (_targetType != null)
 				{
 					clickedTile.Type = _targetType; 
 				}
-				clickedTile.ChangeRiver();
+				clickedTile.HasRiver = _tileHasRiver;
 				meshGenerator.RegenerateMesh(tiles);
 
 			}

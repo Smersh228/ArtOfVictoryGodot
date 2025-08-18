@@ -1,13 +1,25 @@
-[gd_scene load_steps=8 format=3 uid="uid://dsbecd4fe40vw"]
+[gd_scene load_steps=11 format=3 uid="uid://dsbecd4fe40vw"]
 
 [ext_resource type="Script" uid="uid://bekvb8fqgk6a1" path="res://scripts/HexMap3d.cs" id="1_5gx8y"]
 [ext_resource type="Script" uid="uid://bqsjldv4r8sar" path="res://scripts/Camera.cs" id="2_167xd"]
-[ext_resource type="PackedScene" uid="uid://cmgqpimf3y28r" path="res://ui_map_editor.tscn" id="3_167xd"]
+[ext_resource type="PackedScene" uid="uid://cmgqpimf3y28r" path="res://scenes/ui_map_editor.tscn" id="3_167xd"]
 [ext_resource type="Script" uid="uid://bvjuct5atqsiq" path="res://scripts/MeshGenerator.cs" id="4_l45s8"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_l45s8"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+
+[sub_resource type="Sky" id="Sky_qrtlt"]
+sky_material = SubResource("ProceduralSkyMaterial_l45s8")
+
+[sub_resource type="Environment" id="Environment_qx3wq"]
+background_mode = 2
+sky = SubResource("Sky_qrtlt")
+tonemap_mode = 2
+glow_enabled = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l45s8"]
 vertex_color_use_as_albedo = true
-ao_enabled = true
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_l45s8"]
 
@@ -16,6 +28,9 @@ points = PackedVector3Array(-0.00131392, 0.0624939, -0.75, 0.865856, 0, 0.749119
 
 [node name="HexMap3D" type="Node3D"]
 script = ExtResource("1_5gx8y")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_qx3wq")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.494957, 0.071799, -0.865946, 0.504799, 0.787395, 0.353819, 0.707245, -0.612253, 0.353483, 0, 11.9041, 0)

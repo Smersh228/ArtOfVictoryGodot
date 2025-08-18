@@ -32,7 +32,7 @@ public partial class Tile
 	public bool HasRiver
 	{
 		get;
-		private set;
+		set;
 	}
 	public void ChangeRiver()
 	{

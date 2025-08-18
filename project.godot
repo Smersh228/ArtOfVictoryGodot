@@ -34,5 +34,6 @@ left_mouse_click={
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 lights_and_shadows/directional_shadow/soft_shadow_filter_quality=4
 mesh_lod/lod_change/threshold_pixels=0.0

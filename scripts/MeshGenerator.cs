@@ -203,11 +203,11 @@ public partial class MeshGenerator : MeshInstance3D
 					colors["sand"],
 					tilePosition + HexMetrics.Corners[i] * solidRadius,
 					colors[tile.Type],
-					tilePosition + HexMetrics.Intersect(solidRadius, waterRadius, true, i*60),
+					tilePosition + HexMetrics.Intersect(solidRadius, waterRadius, true, i * 60),
 					colors["sand"]
 				);
 				AddTriangle(    //ЗЕМЛЯ / SOLID	//Мб добавить перегрузку с одним цветом?
-					tilePosition + HexMetrics.Intersect(solidRadius, waterRadius, false, i*60),
+					tilePosition + HexMetrics.Intersect(solidRadius, waterRadius, false, i * 60),
 					colors["sand"],
 					tilePosition + HexMetrics.Corners[i + 1] * solidRadius,
 					colors[tile.Type],
@@ -216,8 +216,8 @@ public partial class MeshGenerator : MeshInstance3D
 				);
 				AddRectangle(   //ЗЕМЛЯ / SOLID
 					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Corners[(i + 4) % 6] * solidRadius,
-					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Intersect(solidRadius, waterRadius, false, i*60 + 180),
-					tilePosition + HexMetrics.Intersect(solidRadius, waterRadius, true, i*60),
+					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Intersect(solidRadius, waterRadius, false, i * 60 + 180),
+					tilePosition + HexMetrics.Intersect(solidRadius, waterRadius, true, i * 60),
 					tilePosition + HexMetrics.Corners[i] * solidRadius,
 					colors[tile.GetNeighbor((HexDirection)i).Type],
 					colors["sand"],
@@ -226,46 +226,46 @@ public partial class MeshGenerator : MeshInstance3D
 				);
 
 				AddRectangle(   //БЕРЕГ / BANK
-					tilePosition + HexMetrics.Intersect(solidRadius, waterRadius, true, i*60),
-					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, true, i*60) + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Intersect(solidRadius, waterRadius, true, i * 60),
+					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, true, i * 60) + Vector3.Down * waterDepth,
 					tilePosition + HexMetrics.Corners[i] * waterBottomRadius + Vector3.Down * waterDepth,
 					tilePosition + HexMetrics.Corners[i] * waterRadius,
 					colors["sand"],
 					colors["riverBottom"]
 				);
 				AddRectangle(   //БЕРЕГ / BANK
-					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, false, i*60) + Vector3.Down * waterDepth,
-					tilePosition + HexMetrics.Intersect(solidRadius, waterRadius, false, i*60),
-					tilePosition + HexMetrics.Corners[i+1] * waterRadius,
-					tilePosition + HexMetrics.Corners[i+1] * waterBottomRadius + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, false, i * 60) + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Intersect(solidRadius, waterRadius, false, i * 60),
+					tilePosition + HexMetrics.Corners[i + 1] * waterRadius,
+					tilePosition + HexMetrics.Corners[i + 1] * waterBottomRadius + Vector3.Down * waterDepth,
 					colors["riverBottom"],
 					colors["sand"]
 
 				);
 				AddRectangle(   //БЕРЕГ / BANK
-					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Intersect(solidRadius, waterRadius, false, i*60 + 180),
-					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Intersect(solidRadius, waterBottomRadius, false, i*60 + 180) + Vector3.Down * waterDepth,
-					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, true, i*60) + Vector3.Down * waterDepth,
-					tilePosition + HexMetrics.Intersect(solidRadius, waterRadius, true, i*60),
+					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Intersect(solidRadius, waterRadius, false, i * 60 + 180),
+					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Intersect(solidRadius, waterBottomRadius, false, i * 60 + 180) + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, true, i * 60) + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Intersect(solidRadius, waterRadius, true, i * 60),
 					colors["sand"],
 					colors["riverBottom"]
 				);
-				
+
 
 
 				AddRectangle(   //ДНО / BOTTOM
 					tilePosition + HexMetrics.Corners[i] * waterBottomRadius + Vector3.Down * waterDepth,
-					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, true, i*60) + Vector3.Down * waterDepth,
-					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, false, i*60) + Vector3.Down * waterDepth,
-					tilePosition + HexMetrics.Corners[i+1] * waterBottomRadius + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, true, i * 60) + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, false, i * 60) + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Corners[i + 1] * waterBottomRadius + Vector3.Down * waterDepth,
 					colors["riverBottom"],
 					colors["riverBottom"]
 				);
 				AddRectangle(   //ДНО / BOTTOM // ОТРИСОВЫВАЕТСЯ ДВАЖДЫ В ОДНОЙ ПОЗИЦИИ
-					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, true, i*60) + Vector3.Down * waterDepth,
-					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Intersect(solidRadius, waterBottomRadius, false, i*60 + 180) + Vector3.Down * waterDepth,
-					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Intersect(solidRadius, waterBottomRadius, true, i*60 + 180) + Vector3.Down * waterDepth,
-					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, false, i*60) + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, true, i * 60) + Vector3.Down * waterDepth,
+					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Intersect(solidRadius, waterBottomRadius, false, i * 60 + 180) + Vector3.Down * waterDepth,
+					tile.GetNeighbor((HexDirection)i).GetWorldPosition() + HexMetrics.Intersect(solidRadius, waterBottomRadius, true, i * 60 + 180) + Vector3.Down * waterDepth,
+					tilePosition + HexMetrics.Intersect(solidRadius, waterBottomRadius, false, i * 60) + Vector3.Down * waterDepth,
 					colors["riverBottom"],
 					colors["riverBottom"]
 				);
