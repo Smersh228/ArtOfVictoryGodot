@@ -34,12 +34,32 @@ public partial class Tile
 		get;
 		set;
 	}
+	public bool HasCity
+	{
+		get;
+		set;
+	}
 	public void ChangeRiver()
 	{
 		HasRiver = !HasRiver;
 	}
 
-	private Tile[] neighbors = new Tile[6];
+	private HexBorderRiverState[] _rivers = new HexBorderRiverState[6];
+	public HexBorderRiverState[] Rivers
+	{
+		get
+		{
+			return _rivers;
+		}
+	}
+	public void SetBorderRiverState(HexDirection direction, HexBorderRiverState state)
+	{
+		_rivers[(int)direction] = state;
+		GetNeighbor(direction).HasRiver = true;
+		GetNeighbor(direction)._rivers[(int)direction.Opposite()] = state.Opposite();
+	}
+
+	private Tile[] _neighbors = new Tile[6];
 
 	public Tile(int x, int y, int height, string tileType)
 	{
@@ -74,12 +94,12 @@ public partial class Tile
 
 	public Tile GetNeighbor(HexDirection direction)
 	{
-		return neighbors[(int)direction];
+		return _neighbors[(int)direction];
 	}
 	public void SetNeighbor(HexDirection direction, Tile cell)
 	{
-		neighbors[(int)direction] = cell;
-		cell.neighbors[(int)direction.Opposite()] = this;
+		_neighbors[(int)direction] = cell;
+		cell._neighbors[(int)direction.Opposite()] = this;
 	}
 
 }

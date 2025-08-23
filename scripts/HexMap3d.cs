@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -11,13 +12,28 @@ public partial class HexMap3d : Node3D
 	private int _targetHeight = 10;
 	private bool _tileHasRiver;
 	private bool _changeTileHeight;
+
 	private Control _ui;
+	Camera3D cam;
+	PhysicsDirectSpaceState3D spaceState;
 	MeshGenerator meshGenerator;
 
 	Tile[] tiles;
 	string _targetType;
+	Decal highlighterDecal;
+	ObjectPool<Decal> decalPool;
+	Node decalHolder;
 	public override void _Ready()
 	{
+		cam = GetNode<Camera3D>("Camera3D");
+		spaceState = GetWorld3D().DirectSpaceState;
+
+
+		highlighterDecal = GetNode<Decal>("Map/HighlighterDecal");
+		highlighterDecal.Visible = false;
+		decalPool = new(GD.Load<PackedScene>("res://scenes/highlighter_decal.tscn"));
+		decalHolder = GetNode<Node>("DecalHolder");
+
 		//Обработка UI
 		_ui = GetNode<Control>("MapEditorUI");
 		_ui.GetNode<Label>("Label").Text = _targetHeight.ToString();
@@ -48,7 +64,7 @@ public partial class HexMap3d : Node3D
 			_changeTileHeight = changeHeight;
 		};
 
-		
+
 
 		Random random = new();
 
@@ -88,14 +104,11 @@ public partial class HexMap3d : Node3D
 		meshGenerator = GetNode<MeshGenerator>("Map/MeshGenerator");
 		meshGenerator.RegenerateMesh(tiles);
 	}
-	Vector2? oldCoords = null;
-
+	Tile hoverTile = null, oldHoverTile;
 	public override void _Input(InputEvent @event)
 	{
 		base._Input(@event);
-		var spaceState = GetWorld3D().DirectSpaceState;
-		Camera3D cam = GetNode<Camera3D>("Camera3D");
-		Godot.Vector2 mousePosition = GetViewport().GetMousePosition();
+		Vector2 mousePosition = GetViewport().GetMousePosition();
 		var rayOrigin = cam.ProjectRayOrigin(mousePosition);
 		var rayEnd = rayOrigin + cam.ProjectRayNormal(mousePosition) * 500;
 		PhysicsRayQueryParameters3D parameters = new();
@@ -103,27 +116,73 @@ public partial class HexMap3d : Node3D
 		parameters.To = rayEnd;
 		var intersection = spaceState.IntersectRay(parameters);
 
+
 		if (intersection.Count > 0)
 		{
 			Vector2I coords = HexMetrics.FromCoords(intersection["position"].As<Vector3>()); //Получение координат гекса из коорд пересечения рейкаста
+			Vector2I offsetCoords = HexMetrics.AxialToOffset(coords);
+
+			oldHoverTile = hoverTile;
+			hoverTile = tiles[offsetCoords.Y * height + offsetCoords.X];
+
+			highlighterDecal.Visible = true;
+			highlighterDecal.Position = hoverTile.GetWorldPosition();
+
+
+			if (oldHoverTile != hoverTile)
+			{
+				foreach (Decal d in decalHolder.GetChildren())
+				{
+					decalPool.Add(d);
+				}
+			}
+
+			for (int i = 0; i < 6; i++) // Эксперименты с соседями и пулом декалей
+			{
+				if (oldHoverTile == hoverTile)
+				{
+					break;
+				}
+				if (hoverTile.GetNeighbor((HexDirection)i) == null)
+				{
+					continue;
+				}
+
+
+				Tile neighbor = hoverTile.GetNeighbor((HexDirection)i);
+				Decal decal = decalPool.Pull();
+				GD.Print(decal);
+				decal.Position = neighbor.GetWorldPosition();
+				if (decal.GetParent() == null)
+				{
+					decalHolder.AddChild(decal);
+				}
+			}
 
 			if (@event.IsActionPressed("left_mouse_click"))
 			{
-				Vector2I offsetCoords = HexMetrics.AxialToOffset(coords);
-				Tile clickedTile = tiles[offsetCoords.Y * height + offsetCoords.X];
 
 				if (_changeTileHeight)
 				{
-					clickedTile.Height = _targetHeight;
+					hoverTile.Height = _targetHeight;
 				}
 				if (_targetType != null)
 				{
-					clickedTile.Type = _targetType; 
+					hoverTile.Type = _targetType;
 				}
-				clickedTile.HasRiver = _tileHasRiver;
+				// hoverTile.HasRiver = _tileHasRiver; //Нужно придумать, как реализовать это в интерфейсе, но пока в теории должно работать
+				// hoverTile.SetBorderRiverState(HexDirection.NE, HexBorderRiverState.OUT); //РИСУЕТ ДВОЙНУЮ ДЕКАЛЬ. ПЕРЕПИСАТЬ КОД ДЕКАЛЕЙ
+
+				// hoverTile.HasCity = !hoverTile.HasCity; // ТЕСТ
+
 				meshGenerator.RegenerateMesh(tiles);
 
 			}
+
+		}
+		else
+		{
+			highlighterDecal.Visible = false;
 		}
 	}
 
@@ -131,4 +190,6 @@ public partial class HexMap3d : Node3D
 	{
 		_targetType = type;
 	}
+
+	
 }

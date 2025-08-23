@@ -1,9 +1,11 @@
-[gd_scene load_steps=11 format=3 uid="uid://dsbecd4fe40vw"]
+[gd_scene load_steps=13 format=3 uid="uid://dsbecd4fe40vw"]
 
 [ext_resource type="Script" uid="uid://bekvb8fqgk6a1" path="res://scripts/HexMap3d.cs" id="1_5gx8y"]
 [ext_resource type="Script" uid="uid://bqsjldv4r8sar" path="res://scripts/Camera.cs" id="2_167xd"]
 [ext_resource type="PackedScene" uid="uid://cmgqpimf3y28r" path="res://scenes/ui_map_editor.tscn" id="3_167xd"]
 [ext_resource type="Script" uid="uid://bvjuct5atqsiq" path="res://scripts/MeshGenerator.cs" id="4_l45s8"]
+[ext_resource type="PackedScene" uid="uid://ccwxlbsncq816" path="res://scenes/highlighter_decal.tscn" id="5_qrtlt"]
+[ext_resource type="Texture2D" uid="uid://dq8tnad1hhvie" path="res://sprites/tile_highlighter_red.svg" id="6_qx3wq"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_l45s8"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -55,5 +57,12 @@ script = ExtResource("4_l45s8")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Map"]
 visible = false
 shape = SubResource("ConvexPolygonShape3D_0g0p3")
+
+[node name="HighlighterDecal" parent="Map" instance=ExtResource("5_qrtlt")]
+
+[node name="RedHighlighterDecal" parent="Map" instance=ExtResource("5_qrtlt")]
+texture_albedo = ExtResource("6_qx3wq")
+
+[node name="DecalHolder" type="Node" parent="."]
 
 [connection signal="ColorButtonChanged" from="MapEditorUI" to="." method="ChangeColor"]

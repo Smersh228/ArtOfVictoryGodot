@@ -79,6 +79,10 @@ public partial class MeshGenerator : MeshInstance3D
 
 		arrMesh = Mesh as ArrayMesh;
 		arrMesh.ClearSurfaces();
+		foreach (Node child in GetChildren())
+		{
+			child.QueueFree();
+		}
 
 		surfaceArray.Resize((int)Mesh.ArrayType.Max);
 
@@ -89,13 +93,45 @@ public partial class MeshGenerator : MeshInstance3D
 
 		foreach (Tile tile in tiles)
 		{
-			if (!tile.HasRiver)
+			// ЭКСПЕРИМЕНТ С ДЕКАЛЯМИ
+			// if (!tile.HasRiver)
+			// {
+			// 	GenerateFlatHex(tile);
+			// }
+			// else
+			// {
+			// 	GenerateRiverHex(tile);
+			// }
+			GenerateFlatHex(tile);
+			if (tile.HasRiver)
 			{
-				GenerateFlatHex(tile);
+				for (int i = 0; i < 6; i++)
+				{
+					if (tile.GetNeighbor((HexDirection)i) == null)
+					{
+						continue;
+					}
+					if (!tile.GetNeighbor((HexDirection)i).HasRiver)
+					{
+						continue;
+					}
+					if (tile.Rivers[i] == HexBorderRiverState.NO)
+					{
+						continue;
+					}
+					var riverDecal = new Decal();
+					riverDecal.TextureAlbedo = GD.Load<Texture2D>("res://resources/texture_river.jpg");
+					riverDecal.Position = tile.GetWorldPosition() + HexMetrics.RotateVector(HexMetrics.Corners[i], 30) * 0.5f;
+					riverDecal.Scale = new(0.2f, 1f, 0.5f);
+					riverDecal.Rotate(Vector3.Down, Mathf.DegToRad(i * 60 + 30));
+					AddChild(riverDecal);
+				}
 			}
-			else
+			if (tile.HasCity)
 			{
-				GenerateRiverHex(tile);
+				Node3D city = ResourceLoader.Load<PackedScene>("res://models/Town.glb").Instantiate<Node3D>();
+				city.Position = tile.GetWorldPosition();
+				AddChild(city);
 			}
 		}
 
@@ -119,7 +155,8 @@ public partial class MeshGenerator : MeshInstance3D
 
 		for (int i = 0; i < 3; i++) // четырёхугольники к восточным соседям
 		{
-			if ((tile.GetNeighbor((HexDirection)i) == null) || tile.GetNeighbor((HexDirection)i).HasRiver)
+			// if ((tile.GetNeighbor((HexDirection)i) == null) || tile.GetNeighbor((HexDirection)i).HasRiver)
+			if (tile.GetNeighbor((HexDirection)i) == null)
 			{
 				continue;
 			}
@@ -274,8 +311,6 @@ public partial class MeshGenerator : MeshInstance3D
 
 			AddHex(tilePosition + Vector3.Down * waterDepth, colors["riverBottom"], waterBottomRadius); //Дно
 		}
-
-
 
 		//ДУБЛИРУЮЩИЙСЯ КОД С GenerateFlatHex(Tile tile)
 		for (int i = 0; i < 2; i++) // треугольники к восточным соседям

@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://ccwxlbsncq816"]
+
+[ext_resource type="Texture2D" uid="uid://b65uohup0q8eb" path="res://sprites/tile_highlighter.svg" id="1_2nqgj"]
+
+[node name="HighlighterDecal" type="Decal"]
+size = Vector3(1.6, 1, 1.6)
+texture_albedo = ExtResource("1_2nqgj")

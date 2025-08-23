@@ -54,11 +54,17 @@ public static class HexMetrics
 	{
 		return vector.Rotated(Vector3.Down, Mathf.DegToRad(degrees));
 	}
+	/// <summary>
+	/// Get point on border of hexagon with radius of outerPoint by intersecting straight line lying on side of hexagon with radius of innerPoint
+	/// </summary>
+	/// <param name="outerPoint">Radius of outer hex</param>
+	/// <param name="innerPoint">Radius of inner hex</param>
+	/// <param name="leftSide">Side of inner hex is counterclockwise from side of outer hex</param>
+	/// <param name="rotation">Rotation of point relative to the center of hex</param>
+	/// <returns>Coordinates of intersection point</returns>
 	public static Vector3 Intersect(float outerPoint, float innerPoint, bool leftSide, int rotation)
 	{
 		float distance = outerPoint - innerPoint;
-		// Vector3 leftWaterSolidBorder = new Vector3(solidWidth / 2, 0, -solidWidth * (float)(Math.Sqrt(3) / 2)) + waterRadius * HexMetrics.Corners[0];
-
 		if (leftSide)
 		{
 			return (Corners[0] * innerPoint + new Vector3(distance / 2, 0, -distance * Mathf.Sqrt(3) / 2)).Rotated(Vector3.Down, Mathf.DegToRad(rotation));
@@ -68,17 +74,37 @@ public static class HexMetrics
 			return (Corners[0] * innerPoint + new Vector3(-distance / 2, 0, -distance * Mathf.Sqrt(3) / 2)).Rotated(Vector3.Down, Mathf.DegToRad(rotation + 60));
 		}
 	}
-
 }
 
-public enum HexDirection {
+public enum HexDirection
+{
 	NE, E, SE, SW, W, NW
 }
 
-public static class HexDirectionExtensions {
+public enum HexBorderRiverState
+{
+	NO, OUT, IN
+}
+public static class HexBorderRiverStateExtensions
+{
+	public static HexBorderRiverState Opposite(this HexBorderRiverState state)
+	{
+		switch (state)
+		{
+			case HexBorderRiverState.OUT:
+				return HexBorderRiverState.IN;
+			case HexBorderRiverState.IN:
+				return HexBorderRiverState.OUT;
+			default:
+				return HexBorderRiverState.NO;
+		}
+	}
+}
 
-    public static HexDirection Opposite(this HexDirection direction)
-    {
-        return (int)direction < 3 ? (direction + 3) : (direction - 3);
+public static class HexDirectionExtensions
+{
+	public static HexDirection Opposite(this HexDirection direction)
+	{
+		return (int)direction < 3 ? (direction + 3) : (direction - 3);
 	}
 }
