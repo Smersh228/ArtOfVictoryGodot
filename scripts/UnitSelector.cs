@@ -1,0 +1,53 @@
+using Godot;
+using Godot.Collections;
+using System;
+using System.Linq;
+
+public partial class UnitSelector : Control
+{
+	// Called when the node enters the scene tree for the first time.
+	public override void _Ready()
+	{
+		GetNode("IconContainer").ProcessMode = ProcessModeEnum.Inherit;
+		UpdateIcons();
+	}
+	Node iconContainer;
+	public void UpdateIcons()
+	{
+		iconContainer = GetNode<Node2D>("IconContainer");
+		int childCount = iconContainer.GetChildCount();
+		Array<Node> children = iconContainer.GetChildren();
+		if (childCount == 0) return;
+		for (int i = 0; i < childCount; i++)
+		{
+			Control child = children[i] as Control;
+			child.Position = Vector2.Up.Rotated(Mathf.DegToRad(60) * i) * 100;
+		}
+	}
+	public void SetUnits(Unit[] units)
+	{
+		foreach (Node child in iconContainer.GetChildren())
+		{
+			child.Free();
+		}
+		foreach (Unit unit in units)
+		{
+			if (unit is null) continue;
+			UnitIcon unitIcon = GD.Load<PackedScene>("res://scenes/unit_icon.tscn").Instantiate<UnitIcon>();
+			iconContainer.AddChild(unitIcon);
+			unitIcon.ProcessMode = ProcessModeEnum.Inherit;
+			// unitIcon.SetIcon(GD.Load<Texture2D>(UnitData.GlobalUnitData[unit.Type]["icon"].ToString()));
+			unitIcon.SetUnit("po2");
+			// GD.Print(UnitData.GlobalUnitData[unit.Type]["icon"].ToString());
+			
+		}
+	}
+	public void ChangeVisibility(bool visible)
+	{
+		foreach (UnitIcon child in iconContainer.GetChildren())
+		{
+			child.Visible = visible;
+		}
+		
+	}
+}

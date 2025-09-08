@@ -66,7 +66,7 @@ public partial class MeshGenerator : MeshInstance3D
 		AddTriangle(v1, c1, v3, c3, v4, c4);
 	}
 
-	public void RegenerateMesh(Tile[] tiles)
+	public void RegenerateMesh(Tile[,] tiles)
 	{
 		GD.Print("Start generation");
 		GD.Print(Time.GetTicksMsec());
@@ -74,8 +74,6 @@ public partial class MeshGenerator : MeshInstance3D
 		st = new();
 		st.Begin(Mesh.PrimitiveType.Triangles);
 		st.SetSmoothGroup(UInt32.MaxValue);
-
-
 
 		arrMesh = Mesh as ArrayMesh;
 		arrMesh.ClearSurfaces();
@@ -93,15 +91,6 @@ public partial class MeshGenerator : MeshInstance3D
 
 		foreach (Tile tile in tiles)
 		{
-			// ЭКСПЕРИМЕНТ С ДЕКАЛЯМИ
-			// if (!tile.HasRiver)
-			// {
-			// 	GenerateFlatHex(tile);
-			// }
-			// else
-			// {
-			// 	GenerateRiverHex(tile);
-			// }
 			GenerateFlatHex(tile);
 			if (tile.HasRiver)
 			{
@@ -127,7 +116,7 @@ public partial class MeshGenerator : MeshInstance3D
 					AddChild(riverDecal);
 				}
 			}
-			if (tile.HasCity)
+			if (tile.HasCity) 
 			{
 				Node3D city = ResourceLoader.Load<PackedScene>("res://models/Town.glb").Instantiate<Node3D>();
 				city.Position = tile.GetWorldPosition();
@@ -189,6 +178,7 @@ public partial class MeshGenerator : MeshInstance3D
 		}
 	}
 
+	/* // ГЕНЕРАЦИЯ ДЕФОРМИРОВАННОГО ГЕКСА. НЕ ИСПОЛЬЗУЕТСЯ. РЕКИ - ДЕКАЛИ
 	public void GenerateRiverHex(Tile tile)
 	{
 		Vector3 tilePosition = tile.GetWorldPosition();
@@ -329,4 +319,5 @@ public partial class MeshGenerator : MeshInstance3D
 			);
 		}
 	}
+	*/
 }

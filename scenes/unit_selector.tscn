@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://b04c5ew2q8fry"]
+
+[ext_resource type="Script" uid="uid://dewyorgua1a2a" path="res://scripts/UnitSelector.cs" id="1_oclox"]
+[ext_resource type="Texture2D" uid="uid://ble3lerltp2nb" path="res://sprites/Ellipse 1.png" id="2_5o2ce"]
+[ext_resource type="PackedScene" uid="uid://cry7bvpdi4q3q" path="res://scenes/unit_icon.tscn" id="2_eofws"]
+
+[node name="UnitSelector" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_oclox")
+
+[node name="IconContainer" type="Node2D" parent="."]
+
+[node name="UnitIcon" parent="IconContainer" instance=ExtResource("2_eofws")]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("2_5o2ce")

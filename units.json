@@ -1,10 +1,13 @@
 {
 	"po2": {
 		"id": "po2",
-		"model": "res://models/sk_sov_aircraft_po2.obj"
+		"model": "res://models/sk_sov_aircraft_po2.obj",
+		"icon": "res://sprites/Ellipse 2.png"
 	},
 	"pz2": {
 		"id": "pz2",
-		"model": "res://models/Panzer II Light Tank.obj"
+		"model": "res://models/sk_sov_aircraft_po2.obj",
+		"icon": "res://sprites/Ellipse 2.png"
+
 	}
 }

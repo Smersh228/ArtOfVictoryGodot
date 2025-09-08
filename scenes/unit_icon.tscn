@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://cry7bvpdi4q3q"]
+
+[ext_resource type="Texture2D" uid="uid://ck7bqmmei433r" path="res://sprites/Ellipse 2.png" id="1_65ey5"]
+[ext_resource type="Script" uid="uid://b60jtm8mjscqn" path="res://scripts/UnitIcon.cs" id="1_s4m6b"]
+
+[node name="UnitIcon" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_s4m6b")
+
+[node name="UnitIcon" type="Sprite2D" parent="."]
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("1_65ey5")

@@ -13,8 +13,12 @@ public static class HexMetrics
 		new Vector3(-innerRadius, 0f, -0.5f * outerRadius),
 		new Vector3(0f, 0f, -outerRadius)
 	};
-
-	public static Vector2I FromCoords(Vector3 position)
+	/// <summary>
+	/// Конвертирует мировые координаты в кубические 3D координаты
+	/// </summary>
+	/// <param name="position"></param>
+	/// <returns></returns>
+	public static Vector3I AxialFromWorldCoords(Vector3 position)
 	{
 		float x = position.X / (innerRadius * 2f);
 		float y = -x;
@@ -44,9 +48,14 @@ public static class HexMetrics
 			}
 		}
 
-		return new(iX, iZ);
+		return new(iX, iZ, -iX - iZ);
 	}
-	public static Vector2I AxialToOffset(Vector2I coords)
+	/// <summary>
+	/// Конвертирует кубические координаты в 2D квадратные
+	/// </summary>
+	/// <param name="coords"></param>
+	/// <returns></returns>
+	public static Vector2I AxialToOffset(Vector3I coords)
 	{
 		return new(coords.X + (int)(coords.Y / 2), coords.Y);
 	}

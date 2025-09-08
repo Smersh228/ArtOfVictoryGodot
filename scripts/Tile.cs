@@ -3,26 +3,26 @@ using System;
 
 public partial class Tile
 {
-	private int _x, _y;  //квадратные координаты
+	private int x, y;  //квадратные координаты
 	public int X
 	{
-		get { return _x; }
+		get { return x; }
 	}
 	public int Y
 	{
-		get { return _y; }
+		get { return y; }
 	}
-	private int _height;
+	private int height;
 	public int Height
 	{
-		get { return _height; }
-		set { if ((0 <= value) && (value <= 15)) _height = value; }
+		get { return height; }
+		set { if ((0 <= value) && (value <= 15)) height = value; }
 	}
-	private string _tileType;
+	private string tileType;
 	public string Type
 	{
-		get { return _tileType; }
-		set { _tileType = value; } //Добавить проверку на валидный тип
+		get { return tileType; }
+		set { tileType = value; } //Добавить проверку на валидный тип
 	}
 	public bool IsActiveTile
 	{
@@ -39,38 +39,67 @@ public partial class Tile
 		get;
 		set;
 	}
-	public void ChangeRiver()
-	{
-		HasRiver = !HasRiver;
-	}
-
-	private HexBorderRiverState[] _rivers = new HexBorderRiverState[6];
+	private HexBorderRiverState[] rivers = new HexBorderRiverState[6]; //Оптимизировать до 2 бит на сторону света
 	public HexBorderRiverState[] Rivers
 	{
 		get
 		{
-			return _rivers;
+			return rivers;
 		}
+	}
+	private byte maxUnitCount = 3;
+	private Unit[] units;
+	public Unit[] Units
+	{
+		get
+		{
+			return units;
+		}
+	}
+	public int UnitCount
+	{
+		get;
+		private set;
+	}
+	private Tile[] _neighbors = new Tile[6];
+
+	public Tile(int x, int y, int height, string tileType) // КОНСТРУКТОР ТУТ <---
+	{
+		this.x = x;
+		this.y = y;
+		Height = height;
+		this.tileType = tileType;
+		units = new Unit[maxUnitCount];
+		UnitCount = 0;
+	}
+
+	public bool AddUnit(Unit unit)
+	{
+		for (int i = 0; i < maxUnitCount; i++)
+		{
+			if (units[i] == null)
+			{
+				units[i] = unit;
+				UnitCount++;
+				return true;
+			}
+		}
+		return false;
+	}
+	public void RemoveUnit(Unit unit)
+	{
+		units[Array.IndexOf(units, unit)] = null;
+		UnitCount--;
 	}
 	public void SetBorderRiverState(HexDirection direction, HexBorderRiverState state)
 	{
-		_rivers[(int)direction] = state;
+		rivers[(int)direction] = state;
 		GetNeighbor(direction).HasRiver = true;
-		GetNeighbor(direction)._rivers[(int)direction.Opposite()] = state.Opposite();
-	}
-
-	private Tile[] _neighbors = new Tile[6];
-
-	public Tile(int x, int y, int height, string tileType)
-	{
-		_x = x;
-		_y = y;
-		Height = height;
-		_tileType = tileType;
+		GetNeighbor(direction).rivers[(int)direction.Opposite()] = state.Opposite();
 	}
 	public Vector3 GetHexCoords()
 	{
-		return new Vector3(_x - _y / 2, _y, -(_x - _y / 2) - _y);
+		return new Vector3(x - y / 2, y, -(x - y / 2) - y);
 	}
 	public Vector3 GetWorldPosition()
 	{
@@ -83,12 +112,12 @@ public partial class Tile
 	public Vector2[] GetNeighborsCoords()
 	{
 		return [
-			new Vector2(_x+1,_y),
-			new Vector2(_x + _y % 2,_y+1),
-			new Vector2(_x-1+ _y % 2,_y+1),
-			new Vector2(_x-1,_y),
-			new Vector2(_x + _y % 2 - 1,_y-1),
-			new Vector2(_x + 1 + _y % 2 - 1,_y-1)
+			new Vector2(x+1,y),
+			new Vector2(x + y % 2,y+1),
+			new Vector2(x-1+ y % 2,y+1),
+			new Vector2(x-1,y),
+			new Vector2(x + y % 2 - 1,y-1),
+			new Vector2(x + 1 + y % 2 - 1,y-1)
 		];
 	}
 
