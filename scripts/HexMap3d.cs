@@ -186,9 +186,17 @@ public partial class HexMap3d : Node3D
 				*/
 		if (@event.IsActionPressed("left_mouse_click"))
 		{
-			activeTile = hoverTile;
-			activeHighlighterDecal.Position = activeTile.GetWorldPosition();
-			activeHighlighterDecal.Visible = true;
+			if (activeTile == hoverTile)
+			{
+				activeTile = null;
+				activeHighlighterDecal.Visible = false;
+			}
+			else
+			{
+				activeTile = hoverTile;
+				activeHighlighterDecal.Position = activeTile.GetWorldPosition();
+				activeHighlighterDecal.Visible = true;
+			}
 			if (_changeTileHeight)
 			{
 				hoverTile.Height = _targetHeight;
