@@ -21,9 +21,10 @@ public partial class HexMap3d : Node3D
 	Tile[,] tiles;
 	Tile activeTile;
 	private string _targetType;
-	Decal highlighterDecal;
+	Decal highlighterDecal, activeHighlighterDecal;
 	ObjectPool<Decal> decalPool;
 	Node decalHolder;
+	PackedScene baseUnitScene;
 	Unit testUnit, testUnit2; //ТЕСТОВЫЙ ЮНИТ
 	public override void _Ready()
 	{
@@ -33,6 +34,8 @@ public partial class HexMap3d : Node3D
 
 		highlighterDecal = GetNode<Decal>("Map/HighlighterDecal");
 		highlighterDecal.Visible = false;
+		activeHighlighterDecal = GetNode<Decal>("Map/RedHighlighterDecal");
+		activeHighlighterDecal.Visible = false;
 		decalPool = new(GD.Load<PackedScene>("res://scenes/highlighter_decal.tscn"));
 		decalHolder = GetNode<Node>("DecalHolder");
 
@@ -81,7 +84,7 @@ public partial class HexMap3d : Node3D
 			for (int x = 0; x < width; x++)
 			{
 				Tile tile = new(x, y, (int)random.NextInt64(0, 16), random.NextSingle() > 0.5 ? "flat" : "bushes");
-				if (x > 0)
+				if (x > 0) //Назначение соседей
 				{
 					tile.SetNeighbor(HexDirection.W, tiles[x - 1, y]); //Сосед слева
 				}
@@ -110,87 +113,82 @@ public partial class HexMap3d : Node3D
 		meshGenerator = GetNode<MeshGenerator>("Map/MeshGenerator");
 		meshGenerator.RegenerateMesh(tiles);
 
+		baseUnitScene = GD.Load<PackedScene>("res://scenes/unit.tscn");
 
-
-		testUnit = GD.Load<PackedScene>("res://scenes/unit.tscn").Instantiate<Unit>(); //Вынести работу с юнитами куда-нибудь
-		testUnit.Init("po2");
-		testUnit.Coordinates = new(1, 1);
-		tiles[1, 1].AddUnit(testUnit);
-		AddChild(testUnit);
-
-		testUnit2 = GD.Load<PackedScene>("res://scenes/unit.tscn").Instantiate<Unit>(); //Вынести работу с юнитами куда-нибудь
-		testUnit2.Init("pz2");
-		testUnit2.Coordinates = new(1, 1);
-		tiles[1, 1].AddUnit(testUnit2);
-		AddChild(testUnit2);
-
-		MoveUnit(testUnit2, new Vector2I(3, 3));
-		MoveUnit(testUnit, new Vector2I(3, 3));
+		testUnit = InstantiateUnit("po2", tiles[1, 1]);
+		testUnit2 = InstantiateUnit("po2", tiles[1, 1]);
+		MoveUnit(testUnit2, new Vector2I(2, 2));
+		MoveUnit(testUnit, new Vector2I(2, 2));
 	}
 	Tile hoverTile = null, oldHoverTile;
 	UnitSelector selector;
 	public override void _Input(InputEvent @event)
 	{
-		base._Input(@event);
-		Vector2 mousePosition = GetViewport().GetMousePosition();
+		Vector2 mousePosition = GetViewport().GetMousePosition(); //Рэйкаст
 		var rayOrigin = cam.ProjectRayOrigin(mousePosition);
-		var rayEnd = rayOrigin + cam.ProjectRayNormal(mousePosition) * 500;
+		var rayEnd = rayOrigin + cam.ProjectRayNormal(mousePosition) * 100;
 		PhysicsRayQueryParameters3D parameters = new();
 		parameters.From = rayOrigin;
 		parameters.To = rayEnd;
 		var intersection = spaceState.IntersectRay(parameters);
 
-		if (intersection.Count == 0)
+		if (intersection.Count == 0) //Если смотрим в пустоту
 		{
 			highlighterDecal.Visible = false;
 			return;
 		}
 
-		Vector3I coords = HexMetrics.AxialFromWorldCoords(intersection["position"].As<Vector3>()); //Получение координат гекса из коорд пересечения рейкаста
+		Vector3I coords = HexMetrics.AxialFromWorldCoords(intersection["position"].As<Vector3>()); //Получение координат гекса из коорд пересечения рэйкаста
 
 		oldHoverTile = hoverTile;
 		hoverTile = GetAxialTile(HexMetrics.AxialToOffset(coords));
 
 		// Подсветка тайла под курсором
-		highlighterDecal.Visible = true;
-		highlighterDecal.Position = hoverTile.GetWorldPosition();
-
-
+		if (hoverTile == activeTile)
+		{
+			highlighterDecal.Visible = false;
+		}
+		else
+		{
+			highlighterDecal.Visible = true;
+			highlighterDecal.Position = hoverTile.GetWorldPosition();
+		}
 		/*  // Эксперименты с соседями и пулом декалей
-		if (oldHoverTile != hoverTile)
-		{
-			foreach (Decal d in decalHolder.GetChildren())
-			{
-				decalPool.Add(d);
-			}
-		}
+				if (oldHoverTile != hoverTile)
+				{
+					foreach (Decal d in decalHolder.GetChildren())
+					{
+						decalPool.Add(d);
+					}
+				}
 
-		foreach (Vector3I vector in GetTileCoordsInRadius(coords, 1))
-		{
-			if (oldHoverTile == hoverTile)
-			{
-				break;
-			}
+				foreach (Vector3I vector in GetTileCoordsInRadius(coords, 1))
+				{
+					if (oldHoverTile == hoverTile)
+					{
+						break;
+					}
 
-			Tile tile = GetAxialTile(HexMetrics.AxialToOffset(vector));
-			if (tile == null)
-			{
-				continue;
-			}
+					Tile tile = GetAxialTile(HexMetrics.AxialToOffset(vector));
+					if (tile == null)
+					{
+						continue;
+					}
 
-			Decal decal = decalPool.Pull();
-			GD.Print(decal);
-			decal.Position = tile.GetWorldPosition();
-			if (decal.GetParent() == null)
-			{
-				decalHolder.AddChild(decal);
-			}
-		}
-		*/
+					Decal decal = decalPool.Pull();
+					GD.Print(decal);
+					decal.Position = tile.GetWorldPosition();
+					if (decal.GetParent() == null)
+					{
+						decalHolder.AddChild(decal);
+					}
+				}
+				*/
 		if (@event.IsActionPressed("left_mouse_click"))
 		{
 			activeTile = hoverTile;
-
+			activeHighlighterDecal.Position = activeTile.GetWorldPosition();
+			activeHighlighterDecal.Visible = true;
 			if (_changeTileHeight)
 			{
 				hoverTile.Height = _targetHeight;
@@ -203,30 +201,24 @@ public partial class HexMap3d : Node3D
 			// hoverTile.SetBorderRiverState(HexDirection.NE, HexBorderRiverState.OUT); //РИСУЕТ ДВОЙНУЮ ДЕКАЛЬ. ПЕРЕПИСАТЬ КОД ДЕКАЛЕЙ
 
 			// hoverTile.HasCity = !hoverTile.HasCity; // ТЕСТ
-			meshGenerator.RegenerateMesh(tiles);
+			meshGenerator.RegenerateMesh(tiles); //ОПТИМИЗИРОВАТЬ
 
-			if (hoverTile.UnitCount > 1)
+			if (hoverTile.UnitCount > 1) // Призыв селектора юнитов
 			{
-				selector.Visible = true;
-				selector.ProcessMode = ProcessModeEnum.Inherit;
-				selector.SetUnits(hoverTile.Units);
-				selector.UpdateIcons();
-				selector.ChangeVisibility(true);
+				selector.Show(hoverTile);
 			}
 			else
 			{
-				selector.ChangeVisibility(false);
-				selector.Visible = false;
-				selector.ProcessMode = ProcessModeEnum.Disabled;
+				selector.Hide();
 			}
 		}
-		
 	}
 
-	public override void _Process(double delta) {
+	public override void _Process(double delta)
+	{
 		if (activeTile is not null)
 		{
-			selector.Position = cam.UnprojectPosition(activeTile.GetWorldPosition()); 
+			selector.Position = cam.UnprojectPosition(activeTile.GetWorldPosition());
 		}
 	}
 
@@ -290,7 +282,32 @@ public partial class HexMap3d : Node3D
 	{
 		tiles[unit.Coordinates.X, unit.Coordinates.Y].RemoveUnit(unit);
 		unit.Position = tile.GetWorldPosition();
-		unit.Coordinates = new(tile.X, tile.Y);
+		unit.Coordinates = tile.Coordinates;
 		tile.AddUnit(unit);
+	}
+	/// <summary>
+	/// Добавляет юнита на карту
+	/// </summary>
+	/// <param name="unit"></param>
+	/// <param name="tile"></param>
+	public void PlaceUnit(Unit unit, Tile tile)
+	{
+		unit.Position = tile.GetWorldPosition();
+		unit.Coordinates = tile.Coordinates;
+		tile.AddUnit(unit);
+	}
+	/// <summary>
+	/// Создаёт экземпляр юнита и размещает его на указанном тайле
+	/// </summary>
+	/// <param name="id">Текстовый идентификатор юнита (po2, pz2 ...)</param>
+	/// <param name="tile"></param>
+	/// <returns></returns>
+	public Unit InstantiateUnit(string id, Tile tile)
+	{
+		Unit unit = baseUnitScene.Instantiate<Unit>();
+		unit.Init(id);
+		PlaceUnit(unit, tile);
+		AddChild(unit);
+		return unit;
 	}
 }

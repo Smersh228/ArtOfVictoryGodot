@@ -12,6 +12,13 @@ public partial class Tile
 	{
 		get { return y; }
 	}
+	public Vector2I Coordinates
+	{
+		get
+		{
+			return new(X, Y);
+		}
+	}
 	private int height;
 	public int Height
 	{

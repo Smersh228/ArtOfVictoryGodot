@@ -39,15 +39,28 @@ public partial class UnitSelector : Control
 			// unitIcon.SetIcon(GD.Load<Texture2D>(UnitData.GlobalUnitData[unit.Type]["icon"].ToString()));
 			unitIcon.SetUnit("po2");
 			// GD.Print(UnitData.GlobalUnitData[unit.Type]["icon"].ToString());
-			
+
 		}
 	}
-	public void ChangeVisibility(bool visible)
+	public void ChangeChildVisibility(bool visible)
 	{
 		foreach (UnitIcon child in iconContainer.GetChildren())
 		{
 			child.Visible = visible;
 		}
-		
+	}
+	public void Show(Tile tile)
+	{
+		Visible = true;
+		ProcessMode = ProcessModeEnum.Inherit;
+		SetUnits(tile.Units);
+		UpdateIcons();
+		ChangeChildVisibility(true);
+	}
+	public void Hide()
+	{
+		ChangeChildVisibility(false);
+		Visible = false;
+		ProcessMode = ProcessModeEnum.Disabled;
 	}
 }
