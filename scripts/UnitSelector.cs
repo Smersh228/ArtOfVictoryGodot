@@ -36,10 +36,7 @@ public partial class UnitSelector : Control
 			UnitIcon unitIcon = GD.Load<PackedScene>("res://scenes/unit_icon.tscn").Instantiate<UnitIcon>();
 			iconContainer.AddChild(unitIcon);
 			unitIcon.ProcessMode = ProcessModeEnum.Inherit;
-			// unitIcon.SetIcon(GD.Load<Texture2D>(UnitData.GlobalUnitData[unit.Type]["icon"].ToString()));
-			unitIcon.SetUnit("po2");
-			// GD.Print(UnitData.GlobalUnitData[unit.Type]["icon"].ToString());
-
+			unitIcon.SetUnit(unit.Type);
 		}
 	}
 	public void ChangeChildVisibility(bool visible)
@@ -49,7 +46,11 @@ public partial class UnitSelector : Control
 			child.Visible = visible;
 		}
 	}
-	public void Show(Tile tile)
+	/// <summary>
+	/// Делает селектор видимым. Селектор отображает юнитов на тайле
+	/// </summary>
+	/// <param name="tile">Тайл, юниты с которого будут показаны в селекторе</param>
+	public void ShowSelector(Tile tile)
 	{
 		Visible = true;
 		ProcessMode = ProcessModeEnum.Inherit;
@@ -57,7 +58,7 @@ public partial class UnitSelector : Control
 		UpdateIcons();
 		ChangeChildVisibility(true);
 	}
-	public void Hide()
+	public void HideSelector()
 	{
 		ChangeChildVisibility(false);
 		Visible = false;

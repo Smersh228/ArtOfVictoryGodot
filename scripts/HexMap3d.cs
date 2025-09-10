@@ -186,12 +186,12 @@ public partial class HexMap3d : Node3D
 				*/
 		if (@event.IsActionPressed("left_mouse_click"))
 		{
-			if (activeTile == hoverTile)
+			if (activeTile == hoverTile) //Если кликаем по активному тайлу, снимаем выделениеы
 			{
 				activeTile = null;
 				activeHighlighterDecal.Visible = false;
 			}
-			else
+			else //Если выбираем новый тайл
 			{
 				activeTile = hoverTile;
 				activeHighlighterDecal.Position = activeTile.GetWorldPosition();
@@ -211,13 +211,13 @@ public partial class HexMap3d : Node3D
 			// hoverTile.HasCity = !hoverTile.HasCity; // ТЕСТ
 			meshGenerator.RegenerateMesh(tiles); //ОПТИМИЗИРОВАТЬ
 
-			if (hoverTile.UnitCount > 1) // Призыв селектора юнитов
+			if (activeTile.UnitCount > 1) // Призыв селектора юнитов
 			{
-				selector.Show(hoverTile);
+				selector.ShowSelector(hoverTile);
 			}
 			else
 			{
-				selector.Hide();
+				selector.HideSelector();
 			}
 		}
 	}

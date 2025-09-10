@@ -3,6 +3,9 @@ using System;
 
 public partial class Unit : Node3D
 {
+	/// <summary>
+	/// Строковый идентификатор типа юнита
+	/// </summary>
 	public string Type
 	{
 		get;
@@ -10,6 +13,7 @@ public partial class Unit : Node3D
 	}
 	private MeshInstance3D meshInstance;
 	private Vector2I coordinates;
+	private UnitData globalUnitData;
 	public Vector2I Coordinates
 	{
 		get
@@ -27,10 +31,11 @@ public partial class Unit : Node3D
 	}
 	public void Init(string type)
 	{
+		globalUnitData = UnitData.Instance;
 		Type = type;
 		meshInstance = GetNode<MeshInstance3D>("MeshInstance3D");
 		
-		Mesh modelMesh = GD.Load<ArrayMesh>(UnitData.GlobalUnitData[type]["model"].ToString());
+		Mesh modelMesh = GD.Load<ArrayMesh>(globalUnitData[type]["model"].ToString());
 		meshInstance.Mesh = modelMesh;
 	}
 }

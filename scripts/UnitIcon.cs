@@ -4,6 +4,8 @@ using System;
 public partial class UnitIcon : Control
 {
 	Sprite2D icon;
+	private UnitData globalUnitData;
+
 	public override void _Ready()
 	{
 		icon = GetNode<Sprite2D>("UnitIcon");
@@ -14,6 +16,8 @@ public partial class UnitIcon : Control
 	}
 	public void SetUnit(string unit)
 	{
-		icon.Texture = GD.Load<Texture2D>(UnitData.GlobalUnitData[unit]["icon"].ToString());
+		globalUnitData = UnitData.Instance;
+
+		icon.Texture = GD.Load<Texture2D>(globalUnitData[unit]["icon"].ToString());
 	}
 }
