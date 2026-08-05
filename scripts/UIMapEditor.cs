@@ -13,19 +13,19 @@ public partial class UIMapEditor : Control
 		HBoxContainer container = GetNode<HBoxContainer>("Container");
 
 		_colorButtons = new();
+		float sizeX = 0f;
 		foreach (var tile in HexTileData.GlobalTileData)
 		{
-
+			sizeX += 32f;
 			ColorCheckButton cb = colorButton.Instantiate<ColorCheckButton>();
 			// cb.SetColor(new(HexTileData.GlobalTileData[tile.Key]["color"].ToString()));
 			cb.TileType = tile.Key;
 			cb.SizeFlagsHorizontal = SizeFlags.ExpandFill;
 			cb.SizeFlagsStretchRatio = 1;
-			cb.Size = new(32, 32);
-			container.Size = new(container.Size.X + cb.Size.X, container.Size.Y);
 			container.AddChild(cb);
 			cb.ButtonGroup = _colorButtons;
 		}
+		container.Size = new(container.Size.X + sizeX, container.Size.Y);
 
 		// AddUserSignal("color_button_changed", [new Godot.Collections.Dictionary() {{ "name", "color" },{ "type", (int)Variant.Type.Color }, }]);
 		_colorButtons.Pressed += (button) =>
@@ -33,6 +33,4 @@ public partial class UIMapEditor : Control
 			EmitSignal(SignalName.ColorButtonChanged, ((ColorCheckButton)button).TileType);
 		};
 	}
-
-	
 }
