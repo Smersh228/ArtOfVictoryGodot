@@ -15,19 +15,17 @@ public static class Phases
 	{
 		foreach (SquadNum squadNum in state.FireSupressionSquads)
 		{
-			SquadId id = state.Squads[squadNum.Value];
-			var def = state.Registry.Squads[id];
-			ref Squads.Data data = ref state.SquadsData[squadNum.Value];
+			Squad squad = state[squadNum];
 
-			var roll = Actions.RollD6(def.Stats.Durability.Rolls);
-			var required = def.Stats.Durability.Value - data.Loss;
+			var roll = Actions.RollD6(squad.Def.Stats.Durability.Rolls);
+			var required = squad.Def.Stats.Durability.Value - squad.Data.Loss;
 			if (roll <= required)
 			{
 				state.FireSupressionSquads.Remove(squadNum);
 			}
 			else
 			{
-				data.Loss += 1;
+				squad.Data.Loss += 1;
 			}
 		}
 	}

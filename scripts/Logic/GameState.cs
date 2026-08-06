@@ -12,8 +12,25 @@ public record struct SquadNum(ushort Value);
 
 public record struct OrderCommand(SquadNum Executor, OrderId Order);
 
+public readonly ref struct Squad
+{
+	public readonly Squads.Definition Def;
+	public readonly ref Squads.Data Data;
+
+	public Squad(Squads.Definition def, ref Squads.Data data)
+	{
+		Def = def;
+		Data = ref data;
+	}
+}
+
 public class GameState
 {
+	public Squad this[SquadNum num]
+	{
+		get => new(Registry.Squads[Squads[num.Value]], ref SquadsData[num.Value]);
+	}
+
 	public Registry Registry { get; init; }
 	//public HexId[] Hexes { get; init; }
 	//public SquadId[] Squads { get; init; }
