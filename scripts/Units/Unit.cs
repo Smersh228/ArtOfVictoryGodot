@@ -3,22 +3,22 @@ using System.Collections.Generic;
 
 namespace Units;
 
-readonly struct Durability
+public readonly struct Durability
 {
-	byte Rolls { get; init; }
-	byte Value { get; init; }
-	byte Loss { get; init; }
+	public byte Rolls { get; init; }
+	public byte Value { get; init; }
+	public byte Loss { get; init; }
 }
 
-public class StatsGround
+public class Stats
 {
-	Army Army { get; init; }
-	byte Count { get; init; }
-	Type Type { get; init; }
-	Durability Durability { get; init; }
-	byte Armor { get; init; }
-	byte Ammo { get; init; }
-	byte Cost { get; init; }
+	public Army Army { get; init; }
+	public byte Count { get; init; }
+	public Type Type { get; init; }
+	public Durability Durability { get; init; }
+	public byte Armor { get; init; }
+	public byte Ammo { get; init; }
+	public byte Cost { get; init; }
 }
 
 public class FirePower
@@ -31,7 +31,7 @@ public class FirePower
 
 public class Definition
 {
-	public StatsGround Stats { get; init; }
+	public Stats Stats { get; init; }
 	public FirePower FirePower { get; init; }
 	public HashSet<Orders.Order> Orders { get; init; }
 }
