@@ -14,5 +14,5 @@ public class Hex
 {
 	public Capabilities Capabilities { get; init; }
 
-	public Units.Type[] CanAmbushOrder { get; init; }
+	public Squads.Type[] CanAmbushOrder { get; init; }
 }

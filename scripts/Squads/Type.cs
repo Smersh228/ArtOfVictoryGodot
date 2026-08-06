@@ -1,6 +1,6 @@
 using System;
 
-namespace Units;
+namespace Squads;
 
 public enum Type : byte
 {

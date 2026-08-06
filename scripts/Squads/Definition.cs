@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Units;
+namespace Squads;
 
 public readonly struct Durability
 {
@@ -41,10 +41,4 @@ public struct Data
 	public byte Loss { get; set; }
 	public byte ArmorChange { get; set; }
 	public byte AmmoLoss { get; set; }
-}
-
-public class PlayerTroops
-{
-	public Definition[] Definitions { get; init; }
-	public Data[] Data { get; init; }
 }

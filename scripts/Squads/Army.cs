@@ -1,6 +1,6 @@
 using System;
 
-naemspace Units;
+namespace Squads;
 
 public enum Army : byte
 {
