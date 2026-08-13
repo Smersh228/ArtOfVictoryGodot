@@ -48,4 +48,11 @@ public class GameState
 	//public Dictionary<Squads.Army>
 	public Queue<OrderCommand> Commands { get; init; } // 1sq = 1hod = 1order
 	public HashSet<SquadNum> FireSupressionSquads { get; init; }
+
+	public Map Map { get; init; }
+	public Tile this[HexNum pos]
+	{
+		get => new();
+		//get => new(Registry.Hexes[Hexes[pos.]], pos);
+	}
 }
