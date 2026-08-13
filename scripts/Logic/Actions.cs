@@ -29,34 +29,32 @@ public static class Actions
 		return result;
 	}
 
-	public static void TestForAttack(GameState state, SquadNum attacker, SquadNum target)
+	public static void TestForAttack(GameState state, Squad attacker, Squad target)
 	{
 		// 1 count target defense
-		Squad t = state[target];
-		Squad a = state[attacker];
-		int armor = t.Def.Stats.Armor + t.Data.ArmorChange;
+		int armor = target.Def.Stats.Armor + target.Data.ArmorChange;
 		// 2 count view line and distance to target
-		byte distance = Map.Distance(a.Pos, t.Pos);
-		if (distance > a.Def.FirePower.Range)
+		byte distance = Map.Distance(attacker.Pos, target.Pos);
+		if (distance > attacker.Def.FirePower.Range)
 		{
 			return;
 		}
 		// 3 get target type
-		var type = t.Def.Stats.Type;
+		var type = target.Def.Stats.Type;
 		// 4 get fire power (as D6 count)
 		int fp;
-		if (a.Pos == t.Pos)
+		if (attacker.Pos == target.Pos)
 		{
-			if (!a.Def.FirePower.Melee.ContainsKey(type))
+			if (!attacker.Def.FirePower.Melee.ContainsKey(type))
 				return;
-			fp = a.Def.FirePower.Melee[type][0];
+			fp = attacker.Def.FirePower.Melee[type][0];
 		}
-		if (!a.Def.FirePower.Normal.ContainsKey(type))
+		if (!attacker.Def.FirePower.Normal.ContainsKey(type))
 			return;
-		fp = a.Def.FirePower.Normal[type][distance - 1];
+		fp = attacker.Def.FirePower.Normal[type][distance - 1];
 		// 5 roll dices
 		// 6 compare rolls with accuracy
-		int ac = a.Def.FirePower.Accuracy[distance - 1];
+		int ac = attacker.Def.FirePower.Accuracy[distance - 1];
 		// 7 remove dices > accuracy for distance
 		// 8 other dices counts as attacks
 		int attackCount = RollD6AndCount(count: fp, max: ac);
@@ -66,7 +64,7 @@ public static class Actions
 		attackCount -= armor;
 		// 10 now attacks counts as hits
 		// 11 each hit removes durability count / loss
-		t.Data.Loss += (byte)attackCount;
+		target.Data.Loss += (byte)attackCount;
 	}
 
 }
