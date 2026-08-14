@@ -42,10 +42,53 @@ public class Map
 		);
 	}
 
+	public const byte MaxRadius = 127;
+	private readonly byte radius;
+	public byte Radius
+	{
+		get => radius;
+		init
+		{
+			if (value > MaxRadius)
+				radius = MaxRadius;
+			radius = value;
+		}
+	}
+
 	// Key -> Def
 	public Hex[] Registry { get; init; }
 	// Pos -> Key
 	public Dictionary<Pos, ushort> Keys { get; init; }
+
+	public IEnumerable<Pos> EnumerateRadius()
+	{
+		return EnumerateRadius(Radius);
+	}
+
+	public static IEnumerable<Pos> EnumerateRadius(byte radius)
+	{
+		int D = radius * 2 + 1;
+		byte L1, L2;
+		for (L1 = 0; L1 < radius; L1++)
+		{
+			for (L2 = (byte)(radius - L1); L2 < D; L2++)
+			{
+				yield return new Pos(L1, L2);
+			}
+		}
+		for (L2 = 0; L2 < D; L2++)
+		{
+			yield return new Pos(L1, L2);
+		}
+		L1++;
+		for (int c = 0; c < radius; c++, L1++)
+		{
+			for (L2 = 0; L2 < D - c - 1; L2++)
+			{
+				yield return new Pos(L1, L2);
+			}
+		}
+	}
 
 	public static byte Distance(Pos from, Pos to)
 	{

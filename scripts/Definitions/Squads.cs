@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Squads;
+using Logic.Entities.Squads;
 
 namespace Definitions1;
 
@@ -10,9 +10,9 @@ public enum SquadKey : ushort
 
 public static partial class SRegistry
 {
-	public static readonly Dictionary<Logic.SquadId, Definition> Squads = new()
+	public static readonly Dictionary<ushort, Definition> Squads = new()
 	{
-		[new((ushort)SquadKey.T34mod1940)] = new()
+		[(ushort)SquadKey.T34mod1940] = new()
 		{
 			Stats = new()
 			{

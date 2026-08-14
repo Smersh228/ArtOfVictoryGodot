@@ -13,15 +13,15 @@ public static class Phases
 	//2
 	public static void RecoveryTests(GameState state)
 	{
-		foreach (SquadNum squadNum in state.FireSupressionSquads)
+		foreach (var sId in state.Squads.FireSupression)
 		{
-			Squad squad = state[squadNum];
+			Squad squad = state.Squads[sId];
 
 			var roll = Actions.RollD6(squad.Def.Stats.Durability.Rolls);
 			var required = squad.Def.Stats.Durability.Value - squad.Data.Loss;
 			if (roll <= required)
 			{
-				state.FireSupressionSquads.Remove(squadNum);
+				state.Squads.FireSupression.Remove(sId);
 			}
 			else
 			{

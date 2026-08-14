@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Orders;
+using Logic.Entities.Orders;
 
 namespace Definitions1;
 
