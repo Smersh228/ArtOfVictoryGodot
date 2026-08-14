@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Squads;
+namespace Logic.Entities.Squads;
 
 public readonly struct Durability
 {

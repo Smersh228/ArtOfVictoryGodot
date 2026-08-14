@@ -1,20 +1,17 @@
 using System;
 using System.Collections.Generic;
+using Logic.Entities.Tiles;
 
 namespace Logic;
 
-public readonly ref struct Tile
+public record struct Pos(byte L1, byte L2);
+
+public readonly ref struct Tile(Hex def, Pos pos)
 {
-	public readonly Hex Def { get; }
-	public readonly HexNum Pos { get; }
+	public readonly Hex Def { get; } = def;
+	public readonly Pos Pos { get; } = pos;
 
-	public Tile(Hex def, HexNum pos)
-	{
-		Def = def;
-		Pos = pos;
-	}
-
-	public bool IsNeighbour(HexNum pos)
+	public bool IsNeighbour(Pos pos)
 	{
 		short
 		dif1 = (short)(pos.L1 - Pos.L1),
@@ -26,7 +23,7 @@ public readonly ref struct Tile
 		return false;
 	}
 
-	public byte DistanceTo(HexNum dest)
+	public byte DistanceTo(Pos dest)
 	{
 		int l1 = Pos.L1 - dest.L1;
 		int l2 = Pos.L2 - dest.L2;
@@ -37,13 +34,20 @@ public readonly ref struct Tile
 
 public class Map
 {
-	public Tile this[HexNum pos]
+	public Tile this[Pos pos]
 	{
-		get => new();
+		get => new(
+			def: Registry[Keys[pos]],
+			pos: pos
+		);
 	}
-	public Dictionary<HexNum, HexId> HexIds { get; init; }
 
-	public static byte Distance(HexNum from, HexNum to)
+	// Key -> Def
+	public Hex[] Registry { get; init; }
+	// Pos -> Key
+	public Dictionary<Pos, ushort> Keys { get; init; }
+
+	public static byte Distance(Pos from, Pos to)
 	{
 		int l1 = from.L1 - to.L1;
 		int l2 = from.L2 - to.L2;

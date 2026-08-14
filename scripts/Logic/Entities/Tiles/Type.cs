@@ -1,4 +1,4 @@
-namespace Tiles;
+namespace Logic.Entities.Tiles;
 
 enum Type : byte
 {
