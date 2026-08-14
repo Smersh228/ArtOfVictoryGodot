@@ -1,6 +1,6 @@
 using System;
 
-namespace Squads;
+namespace Logic.Entities.Squads;
 
 public enum Army : byte
 {

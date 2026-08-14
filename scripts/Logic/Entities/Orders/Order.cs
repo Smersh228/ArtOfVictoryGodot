@@ -1,6 +1,6 @@
 using System;
 
-namespace Orders;
+namespace Logic.Entities.Orders;
 
 public class Description
 {
