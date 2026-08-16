@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://djdasfotrosny"]
+
+[ext_resource type="Texture2D" uid="uid://ck7bqmmei433r" path="res://sprites/Ellipse 2.png" id="1_rnm4o"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_gk4hq"]
+
+[node name="Node" type="Node3D" unique_id=2088511646]
+
+[node name="Sprite" type="Sprite3D" parent="." unique_id=1829266508]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+pixel_size = 0.0025
+billboard = 1
+texture = ExtResource("1_rnm4o")
+
+[node name="Squad" type="StaticBody3D" parent="." unique_id=701797294]
+input_capture_on_drag = true
+
+[node name="Colider2" type="CollisionShape3D" parent="Squad" unique_id=416596340]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("SphereShape3D_gk4hq")

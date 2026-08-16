@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://cb722r4hxuhv3"]
+
+[ext_resource type="Script" uid="uid://b7cupb60bakkp" path="res://scripts/Interaction/Interactor.cs" id="1_tejgi"]
+
+[node name="Interactor" type="Node" unique_id=1270547878]
+script = ExtResource("1_tejgi")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=1524027500]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.846218, 6.410658)
+light_color = Color(1, 0.32941177, 1, 1)
+light_energy = 5.436
+light_indirect_energy = 4.168
+omni_range = 25.0
+
+[node name="Label1" type="Label" parent="." unique_id=825412327]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Label"
+
+[node name="Label2" type="Label" parent="." unique_id=568924313]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Label"
+
+[node name="Label3" type="Label" parent="." unique_id=378075617]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Label"
