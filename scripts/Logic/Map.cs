@@ -6,6 +6,8 @@ namespace Logic;
 
 public record struct Pos(byte L1, byte L2);
 
+public record struct SPos(sbyte L1, sbyte L2);
+
 public readonly ref struct Tile(Hex def, Pos pos)
 {
 	public readonly Hex Def { get; } = def;
@@ -42,16 +44,21 @@ public class Map
 		);
 	}
 
-	public const byte MaxRadius = 127;
+	public const byte
+	MinRadius = 1,
+	MaxRadius = 127;
 	private readonly byte radius;
-	public byte Radius
+	public required byte Radius
 	{
 		get => radius;
 		init
 		{
 			if (value > MaxRadius)
 				radius = MaxRadius;
-			radius = value;
+			else if (value < MinRadius)
+				radius = MinRadius;
+			else
+				radius = value;
 		}
 	}
 
@@ -86,6 +93,26 @@ public class Map
 			for (L2 = 0; L2 < D - c - 1; L2++)
 			{
 				yield return new Pos(L1, L2);
+			}
+		}
+	}
+
+	public static IEnumerable<SPos> EnumerateSRadius(byte radius)
+	{
+		sbyte L1, L2;
+
+		for (L1 = (sbyte)-radius; L1 < 1; L1++)
+		{
+			for (L2 = (sbyte)(-radius - L1); L2 < radius + 1; L2++)
+			{
+				yield return new SPos(L1, L2);
+			}
+		}
+		for ( ; L1 < radius + 1; L1++)
+		{
+			for (L2 = (sbyte)-radius; L2 <= radius - L1; L2++)
+			{
+				yield return new SPos(L1, L2);
 			}
 		}
 	}
