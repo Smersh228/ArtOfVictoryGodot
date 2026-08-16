@@ -1,5 +1,10 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
-# Others
+
+# IDEs
 .vscode/
+.zed/
+
+#drawio
+*.drawio.bkp
