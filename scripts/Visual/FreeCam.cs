@@ -29,6 +29,8 @@ public partial class FreeCam : Node3D
 		return squad;
 	}
 
+	public Node3D RayCastSquad() => RayCast();
+
 	public override void _Process(double delta)
 	{
 		Vector3 dir = Transform.Basis * mVec.Normalized() * (float)delta * 3f;

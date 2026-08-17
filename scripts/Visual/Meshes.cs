@@ -1,47 +1,10 @@
 using Godot;
 using System;
-using System.Collections.Generic;
 
 namespace Visual;
 
-
 public class Models
 {
-	public readonly Node3D[] tiles;
-	public readonly Node3D[] squads;
-
-	public Models()
-	{
-		List<Node3D> Tiles = [];
-		List<Node3D> Squads = [];
-
-		const float gapScale = 2f / Root3;
-
-		MeshInstance3D tile = new()
-		{
-			Mesh = new CylinderMesh()
-			{
-				Height = 0.2f,
-				TopRadius = 0.49f * gapScale,
-				BottomRadius = 0.49f * gapScale,
-				Material = new StandardMaterial3D()
-				{
-					AlbedoColor = new(r: 0.8f, g: 0.8f, b: 0.4f),
-				},
-				RadialSegments = 6,
-			}
-		};
-		tile.RotateY(Mathf.DegToRad(30f));
-		Tiles.Add(tile);
-
-		var scene = GD.Load<PackedScene>("scenes/squads/paper.tscn");
-		Node3D sq = scene.Instantiate<Node3D>();
-		Squads.Add(sq);
-
-		tiles = Tiles.ToArray();
-		squads = Squads.ToArray();
-	}
-
 	//static readonly float Root3 = MathF.Sqrt(3);
 	public const float
 	Root3 = 1.732051f,

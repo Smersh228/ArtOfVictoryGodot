@@ -2,35 +2,47 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using Logic;
-using Logic.Entities.Squads;
 
 namespace Visual;
 
+public class SquadData
+{
+	public string Name { get; init; }
+}
+
 public partial class Squads : Node3D
 {
-	public readonly Node3D[] Models;
+	public readonly Node3D[] Registry;
 
-	public Squads(Models models, Logic.Squads squads)
+	// Node -> Id
+	public readonly Dictionary<Node, ushort> Ids;
+	// Id -> Visual data
+	public readonly SquadData[] Data;
+
+	public Squads(Node3D[] registry, Logic.Squads squads)
 	{
-		Models = new Node3D[squads.Keys.Length];
+		var count = squads.Keys.Length;
 
-		for (int i = 0; i < squads.Keys.Length; i++)
+		Registry = registry;
+		Ids = new(squads.Keys.Length);
+		Data = new SquadData[count];
+
+		for (ushort id = 0; id < squads.Keys.Length; id++)
 		{
-			Pos p = squads.Positions[i];
-			ushort key = squads.Keys[i];
+			Pos p = squads.Positions[id];
+			ushort key = squads.Keys[id];
 
-			//var squadScene = GD.Load<PackedScene>("scenes/squads/paper.tscn");
-			//Node3D sq = squadScene.Instantiate<Node3D>();
-			Node3D sq = (Node3D)models.squads[key].Duplicate();
-			sq.Position = Visual.Models.PosToWorld(p, 2);
+			Node3D model = (Node3D)Registry[key].Duplicate();
+			model.Position = Models.PosToWorld(p, 2);
 
-			Models[i] = sq;
+			Ids.Add(model, id);
+			Data[id] = new() { Name = "Тест имя" };
 		}
 	}
 
 	public override void _Ready()
 	{
-		foreach (var model in Models)
+		foreach (var model in Ids.Keys)
 			AddChild(model);
 	}
 }

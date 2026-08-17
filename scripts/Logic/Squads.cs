@@ -23,7 +23,7 @@ public class Squads
 	public Squad this[ushort id]
 	{
 		get => new(
-			def: Registry[id],
+			def: Registry[Keys[id]],
 			data: ref Data[id],
 			pos: Positions[id]
 		);

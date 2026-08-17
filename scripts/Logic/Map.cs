@@ -97,4 +97,12 @@ public class Map
 		int cubeSum = Math.Abs(l1) + Math.Abs(l1 + l2) + Math.Abs(l2);
 		return (byte)(cubeSum / 2);
 	}
+
+	public static int CountArea(int radius)
+	{
+		int res = radius * radius;
+		for (int i = 1; i <= radius; i++)
+			res -= i * 2;
+		return res;
+	}
 }
