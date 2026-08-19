@@ -6,9 +6,9 @@ namespace Logic;
 
 public record struct Pos(sbyte L1, sbyte L2);
 
-public readonly ref struct Tile(Hex def, Pos pos)
+public readonly ref struct Tile(Definition def, Pos pos)
 {
-	public readonly Hex Def { get; } = def;
+	public readonly Definition Def { get; } = def;
 	public readonly Pos Pos { get; } = pos;
 
 	public bool IsNeighbour(Pos pos)
@@ -61,7 +61,7 @@ public class Map
 	}
 
 	// Key -> Def
-	public Hex[] Registry { get; init; }
+	public Definition[] Registry { get; init; }
 	// Pos -> Key
 	public Dictionary<Pos, ushort> Keys { get; init; }
 

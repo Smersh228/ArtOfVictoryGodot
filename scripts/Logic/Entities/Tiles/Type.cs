@@ -1,6 +1,6 @@
 namespace Logic.Entities.Tiles;
 
-enum Type : byte
+public enum Type : byte
 {
 	Plains,
 	Bushes,

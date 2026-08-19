@@ -12,7 +12,7 @@ public readonly struct Capabilities(bool Barrier, bool TroopTrench, bool TankTre
 	public bool DOT => Flags[3];
 }
 
-public class Hex
+public class Definition
 {
 	public Capabilities Capabilities { get; init; }
 
