@@ -10,10 +10,13 @@ public partial class Map : Node3D
 	public readonly Dictionary<Logic.Entities.Tiles.Type, Node3D> Registry;
 	public readonly Dictionary<Pos, Node3D> Models;
 
+	public readonly Dictionary<Node, Pos> Positions;
+
 	public Map(Dictionary<Logic.Entities.Tiles.Type, Node3D> registry, Logic.Map map)
 	{
 		Registry = registry;
 		Models = [];
+		Positions = [];
 		foreach (var pos in map.EnumerateRadius())
 		{
 			Vector3 coord = Visual.Models.PosToWorld(pos);
@@ -21,6 +24,7 @@ public partial class Map : Node3D
 			Node3D model = (Node3D)Registry[key].Duplicate();
 			model.Position = coord;
 			Models.Add(pos, model);
+			Positions.Add(model, pos);
 		}
 		Models.TrimExcess();
 	}

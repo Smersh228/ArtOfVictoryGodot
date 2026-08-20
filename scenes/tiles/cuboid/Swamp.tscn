@@ -1,13 +1,18 @@
 [gd_scene format=3 uid="uid://yun6u010cmxf"]
 
 [ext_resource type="CylinderMesh" uid="uid://2mxt6327bcrq" path="res://models/hex3d.res" id="1_yai2j"]
+[ext_resource type="Shape3D" uid="uid://dotbre152bd6t" path="res://scenes/tiles/collider.tres" id="2_10jd1"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yai2j"]
 albedo_color = Color(0.40392157, 0.36862746, 0.09803922, 1)
 
-[node name="Tile" type="Node3D" unique_id=1685071825]
+[node name="Tile" type="StaticBody3D" unique_id=1488975031]
 
 [node name="Ground" type="MeshInstance3D" parent="." unique_id=1717329491]
 transform = Transform3D(0.8660254, 0, 0.5, 0, 1, 0, -0.5, 0, 0.8660254, 0, -0.5, 0)
 mesh = ExtResource("1_yai2j")
 surface_material_override/0 = SubResource("StandardMaterial3D_yai2j")
+
+[node name="Collider" type="CollisionShape3D" parent="." unique_id=916674078]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = ExtResource("2_10jd1")

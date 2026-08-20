@@ -24,7 +24,6 @@ public partial class FreeCam : Node3D
 		intersection.TryGetValue("collider", out Variant unit);
 
 		var squad = (StaticBody3D)(unit);
-		if (squad is null) return null;
 
 		return squad;
 	}

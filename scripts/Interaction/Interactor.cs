@@ -17,6 +17,8 @@ public partial class Interactor : Node
 	ViewPack3D vPack;
 	readonly LocalePackString locale = new();
 
+	Node3D selectedSquad = null;
+
 	public override void _Ready()
 	{
 		byte R = 10;
@@ -69,25 +71,68 @@ public partial class Interactor : Node
 		{
 			if (click.IsReleased()) return;
 
-			var unit = cam.RayCastSquad();
-			if (unit is null) return;
+			var node = cam.RayCastSquad();
 
-			SelectSquad(unit);
+			var result = Select(node);
+
+			switch (result)
+			{
+				case Selection.None:
+					return;
+				case Selection.Squad:
+					SelectSquad(node);
+					return;
+				case Selection.Tile:
+					if (selectedSquad is null) return;
+					var pos = visuals.Map.Positions[node];
+
+					var id = visuals.Squads.Ids[selectedSquad];
+					session.Squads.Positions[id] = pos;
+
+					selectedSquad.Position = Visual.Models.PosToWorld(pos);
+					selectedSquad = null;
+					return;
+				case Selection.Undefined:
+					GD.Print("SELECTED UNDEFINED OBJECT! Inetractor.cs 86");
+					return;
+				default:
+					throw new Exception("Fullfill switch > Intercator.cs 89");
+			}
 		}
 	}
 
 	private void SelectSquad(Node3D unit)
 	{
-		Logic.Squad squad = default;
-		Visual.SquadData data = default;
+		selectedSquad = unit;
 
-		if (visuals.Squads.Ids.TryGetValue(unit, out ushort id))
-		{
-			squad = session.Squads[id];
-			data = visuals.Squads.Data[id];
-		}
+		ushort id = visuals.Squads.Ids[unit];
+
+		var squad = session.Squads[id];
+		var data = visuals.Squads.Data[id];
 
 		UI.IUI ui = GetChild<UI.IUI>(0);
 		ui.Visualise(data, squad, locale);
+	}
+
+	public enum Selection
+	{
+		None,
+		Squad,
+		Tile,
+		Undefined
+	}
+
+	private Selection Select(Node node)
+	{
+		if (node is null)
+			return Selection.None;
+
+		if (visuals.Squads.Ids.ContainsKey(node))
+			return Selection.Squad;
+
+		if (visuals.Map.Positions.ContainsKey(node))
+			return Selection.Tile;
+
+		return Selection.Undefined;
 	}
 }

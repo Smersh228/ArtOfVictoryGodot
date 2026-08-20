@@ -2,6 +2,7 @@
 
 [ext_resource type="CylinderMesh" uid="uid://2mxt6327bcrq" path="res://models/hex3d.res" id="1_hdc3d"]
 [ext_resource type="Material" uid="uid://x0dgl4hyrxmn" path="res://materials/grass.tres" id="2_jrm11"]
+[ext_resource type="Shape3D" uid="uid://dotbre152bd6t" path="res://scenes/tiles/collider.tres" id="3_g8t0l"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gk4hq"]
 albedo_color = Color(0.39230183, 0.18961346, 0.010801022, 1)
@@ -12,7 +13,7 @@ size = Vector3(0.3, 0.3, 0.3)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_62lp4"]
 albedo_color = Color(0.22745098, 0.45490196, 0.21960784, 1)
 
-[node name="Tile" type="Node3D" unique_id=1685071825]
+[node name="Tile" type="StaticBody3D" unique_id=363773249]
 
 [node name="Ground" type="MeshInstance3D" parent="." unique_id=1717329491]
 transform = Transform3D(0.8660254, 0, 0.5, 0, 1, 0, -0.5, 0, 0.8660254, 0, -0.5, 0)
@@ -63,3 +64,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.18717304, 0.34094137, 0.01
 mesh = SubResource("BoxMesh_ol0x4")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_62lp4")
+
+[node name="Collider" type="CollisionShape3D" parent="." unique_id=1626762453]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = ExtResource("3_g8t0l")

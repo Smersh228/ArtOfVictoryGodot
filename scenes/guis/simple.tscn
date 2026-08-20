@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://daxgkeqyybfmn" path="res://scripts/Interaction/UI/UISimple.cs" id="1_fqstv"]
 
-[node name="UI" type="Control" unique_id=1652514434]
+[node name="UI" type="Control" unique_id=1652514434 node_paths=PackedStringArray("Name")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -10,6 +10,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_fqstv")
+Name = NodePath("Top/Name")
 
 [node name="Top" type="HBoxContainer" parent="." unique_id=434726553]
 layout_mode = 1

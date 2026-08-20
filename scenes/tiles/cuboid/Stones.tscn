@@ -2,10 +2,15 @@
 
 [ext_resource type="CylinderMesh" uid="uid://2mxt6327bcrq" path="res://models/hex3d.res" id="1_36te0"]
 [ext_resource type="Material" uid="uid://cw2oc4j0jeyhd" path="res://materials/stone.tres" id="2_36te0"]
+[ext_resource type="Shape3D" uid="uid://dotbre152bd6t" path="res://scenes/tiles/collider.tres" id="3_nlcwu"]
 
-[node name="Tile" type="Node3D" unique_id=1685071825]
+[node name="Tile" type="StaticBody3D" unique_id=454814087]
 
 [node name="Ground" type="MeshInstance3D" parent="." unique_id=1717329491]
 transform = Transform3D(0.8660254, 0, 0.5, 0, 1, 0, -0.5, 0, 0.8660254, 0, -0.5, 0)
 mesh = ExtResource("1_36te0")
 surface_material_override/0 = ExtResource("2_36te0")
+
+[node name="Collider" type="CollisionShape3D" parent="." unique_id=978178878]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = ExtResource("3_nlcwu")
