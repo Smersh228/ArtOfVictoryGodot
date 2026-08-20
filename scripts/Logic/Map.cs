@@ -61,9 +61,9 @@ public class Map
 	}
 
 	// Key -> Def
-	public Definition[] Registry { get; init; }
+	public Dictionary<Entities.Tiles.Type, Definition> Registry { get; init; }
 	// Pos -> Key
-	public Dictionary<Pos, ushort> Keys { get; init; }
+	public Dictionary<Pos, Entities.Tiles.Type> Keys { get; init; }
 
 	public IEnumerable<Pos> EnumerateRadius()
 	{

@@ -1,0 +1,15 @@
+
+Armies:
+  USSR: СССР
+
+Types:
+  Trooper: Пехота
+  TankMedium: Средний танк
+  GroundVehicle: Автотранспорт
+
+Orders:
+  Defense: Оборона
+  Attack: Нападение
+
+Squads:
+  squad: Самолётик

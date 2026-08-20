@@ -1,0 +1,23 @@
+
+Stats:
+  Army: USSR
+  Count: 12
+  Type: Trooper
+  Durability:
+    Rolls: 12
+    Value: 12
+    Loss: 12
+  Armor: 12
+  Cost: 12
+
+FirePower:
+  Accuracy: [4, 3, 2, 1]
+  Normal:
+    TankMedium: [1, 2, 3, 4]
+    GroundVehicle: [1, 2, 3, 4]
+  Melee:
+    Trooper: [1, 2, 3, 4]
+
+Orders:
+-	Defense
+-	Attack

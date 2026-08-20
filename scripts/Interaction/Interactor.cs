@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using Interaction.Import;
 
 namespace Interaction;
 
@@ -12,13 +13,19 @@ public partial class Interactor : Node
 
 	private Visual.Session visuals;
 
+	readonly DataPack<Logic.Entities.Squads.Definition> pack = DataPack<Logic.Entities.Squads.Definition>.FromName("test");
+	ViewPack3D vPack;
+	readonly LocalePackString locale = new();
+
 	public override void _Ready()
 	{
 		byte R = 10;
-		Dictionary<Logic.Pos, ushort> keys = [];
+		Dictionary<Logic.Pos, Logic.Entities.Tiles.Type> keys = [];
+		var values = Enum.GetValues<Logic.Entities.Tiles.Type>();
 		foreach (Logic.Pos pos in Logic.Map.EnumerateRadius(R))
 		{
-			keys.Add(pos, 0);
+			var index = Random.Shared.Next() % values.Length;
+			keys.Add(pos, values[index]);
 		}
 		session = new()
 		{
@@ -32,7 +39,7 @@ public partial class Interactor : Node
 					new(0, 0),
 					new(2, 3)
 				],
-				Registry = Loader.LoadSquads(),
+				Registry = pack.Registry
 			},
 			Map = new()
 			{
@@ -42,11 +49,14 @@ public partial class Interactor : Node
 			}
 		};
 
+		vPack = ViewPack3D.FromName(tileName: "cuboid", squadName: "paper", keys: pack.Keys);
 		visuals = new()
 		{
-			Map = new(Loader.LoadTileModels(), session.Map),
-			Squads = new(Loader.LoadSquadModels(), session.Squads),
+			Map = new(vPack.Tiles, session.Map),
+			Squads = new(vPack.Squads, session.Squads),
 		};
+
+		locale.LoadFromName("test", "locale");
 
 		AddChild(cam);
 		AddChild(visuals.Map);
@@ -78,6 +88,6 @@ public partial class Interactor : Node
 		}
 
 		UI.IUI ui = GetChild<UI.IUI>(0);
-		ui.Visualise(data, squad);
+		ui.Visualise(data, squad, locale);
 	}
 }

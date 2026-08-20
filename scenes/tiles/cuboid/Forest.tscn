@@ -1,0 +1,73 @@
+[gd_scene format=3 uid="uid://c547s1jje6pw8"]
+
+[ext_resource type="CylinderMesh" uid="uid://2mxt6327bcrq" path="res://models/hex3d.res" id="1_3vtxq"]
+[ext_resource type="Material" uid="uid://x0dgl4hyrxmn" path="res://materials/grass.tres" id="2_byp0c"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gk4hq"]
+albedo_color = Color(0.39230183, 0.18961346, 0.010801022, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ol0x4"]
+size = Vector3(0.3, 0.3, 0.3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_62lp4"]
+albedo_color = Color(0.22745098, 0.45490196, 0.21960784, 1)
+
+[node name="Tile" type="Node3D" unique_id=1685071825]
+
+[node name="Ground" type="MeshInstance3D" parent="." unique_id=1717329491]
+transform = Transform3D(0.8660254, 0, 0.5, 0, 1, 0, -0.5, 0, 0.8660254, 0, -0.5, 0)
+mesh = ExtResource("1_3vtxq")
+surface_material_override/0 = ExtResource("2_byp0c")
+
+[node name="Bark1" type="MeshInstance3D" parent="." unique_id=1373678909]
+transform = Transform3D(0.21650635, 0, 0.125, 0, 0.5, 0, -0.125, 0, 0.21650635, 0, 0.20169899, -0.22864263)
+mesh = ExtResource("1_3vtxq")
+surface_material_override/0 = SubResource("StandardMaterial3D_gk4hq")
+
+[node name="Bark2" type="MeshInstance3D" parent="." unique_id=425129214]
+transform = Transform3D(0.21650635, 0, 0.125, 0, 0.5, 0, -0.125, 0, 0.21650635, -0.24200179, 0.20169899, 0.00795047)
+mesh = ExtResource("1_3vtxq")
+surface_material_override/0 = SubResource("StandardMaterial3D_gk4hq")
+
+[node name="Bark3" type="MeshInstance3D" parent="." unique_id=1854001774]
+transform = Transform3D(0.21650635, 0, 0.125, 0, 0.5, 0, -0.125, 0, 0.21650635, 0.15536308, 0.20169899, 0.08627728)
+mesh = ExtResource("1_3vtxq")
+surface_material_override/0 = SubResource("StandardMaterial3D_gk4hq")
+
+[node name="Leaves" type="Node3D" parent="." unique_id=417687205]
+
+[node name="Bushes" type="MeshInstance3D" parent="Leaves" unique_id=329299489]
+transform = Transform3D(0.8936125, 0.022078186, 0.62877494, -0.021507494, 0.9173242, -0.0151333725, -0.47819662, 0, 1.1756808, 0.13024047, 0.37613446, -0.25636625)
+mesh = SubResource("BoxMesh_ol0x4")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_62lp4")
+
+[node name="Bushes6" type="MeshInstance3D" parent="Leaves" unique_id=1393032933]
+transform = Transform3D(1.1061692, 0.024228455, 0.5358769, -0.026623316, 1.0066656, -0.012897502, -0.5919416, 0, 1.0019805, -0.205134, 0.41581768, -0.2748363)
+mesh = SubResource("BoxMesh_ol0x4")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_62lp4")
+
+[node name="Bushes4" type="MeshInstance3D" parent="Leaves" unique_id=2001146109]
+transform = Transform3D(1.0300537, 0, -0.21427861, 0, 1, 0, 0.17739166, 0, 1.2442439, -0.05275041, 0.587325, -0.08228803)
+mesh = SubResource("BoxMesh_ol0x4")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_62lp4")
+
+[node name="Bushes2" type="MeshInstance3D" parent="Leaves" unique_id=853303351]
+transform = Transform3D(1.1152095, 0, -0.2711546, 0, 1, 0, 0.33159548, 0, 0.911937, -0.05595234, 0.4113925, 0.21387774)
+mesh = SubResource("BoxMesh_ol0x4")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_62lp4")
+
+[node name="Bushes5" type="MeshInstance3D" parent="Leaves" unique_id=1443339139]
+transform = Transform3D(0.95852536, 0, -0.28500715, 0, 1, 0, 0.28500715, 0, 0.95852536, 0.19162086, 0.48982358, 0.083693326)
+mesh = SubResource("BoxMesh_ol0x4")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_62lp4")
+
+[node name="Bushes3" type="MeshInstance3D" parent="Leaves" unique_id=478865114]
+transform = Transform3D(0.9753474, 0, 0.22067513, 0, 1, 0, -0.22067513, 0, 0.9753474, -0.29737338, 0.47819144, 0.016438842)
+mesh = SubResource("BoxMesh_ol0x4")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_62lp4")
