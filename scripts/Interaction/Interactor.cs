@@ -5,6 +5,14 @@ using Interaction.Import;
 
 namespace Interaction;
 
+public enum State : byte
+{
+	Watch,
+	Tile,
+	Squad,
+	Order
+}
+
 public partial class Interactor : Node
 {
 	private FreeCam cam = new();
@@ -18,6 +26,9 @@ public partial class Interactor : Node
 	readonly LocalePackString locale = new();
 
 	Node3D selectedSquad = null;
+	Node3D selectedTile = null;
+
+	State state = State.Watch;
 
 	public override void _Ready()
 	{
@@ -72,31 +83,55 @@ public partial class Interactor : Node
 			if (click.IsReleased()) return;
 
 			var node = cam.RayCastSquad();
-
 			var result = Select(node);
-
-			switch (result)
+			switch (state)
 			{
-				case Selection.None:
-					return;
-				case Selection.Squad:
-					SelectSquad(node);
-					return;
-				case Selection.Tile:
-					if (selectedSquad is null) return;
-					var pos = visuals.Map.Positions[node];
+				case State.Order:
+				case State.Tile:
+				case State.Watch:
+					switch (result)
+					{
+						case Selection.None:
+							return;
+						case Selection.Squad:
+							state = State.Squad;
+							SelectTile(selectedTile);
+							SelectSquad(node);
+							return;
+						case Selection.Tile:
+							state = State.Tile;
+							SelectTile(node);
+							return;
+						case Selection.Undefined:
+							GD.Print("SELECTED UNDEFINED OBJECT! Inetractor.cs 86");
+							return;
+						default:
+							throw new Exception("Fullfill switch > Intercator.cs 89");
+					}
+				case State.Squad:
+					switch (result)
+					{
+						case Selection.None:
+							state = State.Watch;
+							return;
+						case Selection.Squad:
+							SelectSquad(node);
+							return;
+						case Selection.Tile:
+							if (selectedSquad is null) return;
+							var pos = visuals.Map.Positions[node];
 
-					var id = visuals.Squads.Ids[selectedSquad];
-					session.Squads.Positions[id] = pos;
+							var id = visuals.Squads.Ids[selectedSquad];
+							session.Squads.Positions[id] = pos;
 
-					selectedSquad.Position = Visual.Models.PosToWorld(pos);
-					selectedSquad = null;
+							selectedSquad.Position = Visual.Models.PosToWorld(pos);
+							selectedSquad = null;
+							state = State.Watch;
+							return;
+						case Selection.Undefined:
+							return;
+					}
 					return;
-				case Selection.Undefined:
-					GD.Print("SELECTED UNDEFINED OBJECT! Inetractor.cs 86");
-					return;
-				default:
-					throw new Exception("Fullfill switch > Intercator.cs 89");
 			}
 		}
 	}
@@ -112,6 +147,20 @@ public partial class Interactor : Node
 
 		UI.IUI ui = GetChild<UI.IUI>(0);
 		ui.Visualise(data, squad, locale);
+	}
+
+	private void SelectTile(Node3D tile)
+	{
+		selectedTile?.GetChild<AnimationPlayer>(1).PlayBackwards("SelectUp");
+
+		if (selectedTile == tile)
+		{
+			selectedTile = null;
+			return;
+		}
+
+		selectedTile = tile;
+		tile.GetChild<AnimationPlayer>(1).Play("SelectUp");
 	}
 
 	public enum Selection

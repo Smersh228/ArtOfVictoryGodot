@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://l5dp885xr341"]
+
+[ext_resource type="CylinderMesh" uid="uid://2mxt6327bcrq" path="res://models/hex3d.res" id="1_atppi"]
+[ext_resource type="Material" uid="uid://x0dgl4hyrxmn" path="res://materials/grass.tres" id="2_yfpvu"]
+
+[node name="Model" type="Node3D" unique_id=1233073629]
+
+[node name="Ground" type="MeshInstance3D" parent="." unique_id=1717329491]
+transform = Transform3D(0.8660254, 0, 0.5, 0, 1, 0, -0.5, 0, 0.8660254, 0, -0.85, 0)
+mesh = ExtResource("1_atppi")
+surface_material_override/0 = ExtResource("2_yfpvu")

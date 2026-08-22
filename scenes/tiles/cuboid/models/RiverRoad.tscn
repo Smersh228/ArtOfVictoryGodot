@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://cct7ctilmgjs2"]
+
+[ext_resource type="CylinderMesh" uid="uid://2mxt6327bcrq" path="res://models/hex3d.res" id="1_e2ky8"]
+[ext_resource type="Material" uid="uid://c8sgfbypqbcgs" path="res://materials/sand.tres" id="2_1fat1"]
+
+[node name="Model" type="Node3D" unique_id=1235619020]
+
+[node name="Ground" type="MeshInstance3D" parent="." unique_id=1717329491]
+transform = Transform3D(0.8660254, 0, 0.5, 0, 1, 0, -0.5, 0, 0.8660254, 0, -0.5, 0)
+mesh = ExtResource("1_e2ky8")
+surface_material_override/0 = ExtResource("2_1fat1")

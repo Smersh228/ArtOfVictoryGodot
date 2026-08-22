@@ -9,3 +9,4 @@ script = ExtResource("1_tejgi")
 [node name="UI" parent="." unique_id=295611633 instance=ExtResource("2_w6gu6")]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1808964956]
+transform = Transform3D(1, 0, 0, 0, 0.786643, 0.6174081, 0, -0.6174081, 0.786643, 0, 0, 0)

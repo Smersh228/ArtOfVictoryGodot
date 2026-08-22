@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://bngurlduju3gt"]
+
+[ext_resource type="CylinderMesh" uid="uid://2mxt6327bcrq" path="res://models/hex3d.res" id="1_4uwet"]
+[ext_resource type="Material" uid="uid://x0dgl4hyrxmn" path="res://materials/grass.tres" id="2_0umqq"]
+
+[node name="Model" type="Node3D" unique_id=1864245634]
+
+[node name="Ground" type="MeshInstance3D" parent="." unique_id=130118268]
+transform = Transform3D(0.8660254, 0, 0.5, 0, 1, 0, -0.5, 0, 0.8660254, 0, -0.5, 0)
+mesh = ExtResource("1_4uwet")
+skeleton = NodePath("../..")
+surface_material_override/0 = ExtResource("2_0umqq")

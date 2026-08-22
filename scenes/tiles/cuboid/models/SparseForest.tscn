@@ -1,8 +1,7 @@
 [gd_scene format=3 uid="uid://jgg01rxoujkf"]
 
-[ext_resource type="CylinderMesh" uid="uid://2mxt6327bcrq" path="res://models/hex3d.res" id="1_hdc3d"]
-[ext_resource type="Material" uid="uid://x0dgl4hyrxmn" path="res://materials/grass.tres" id="2_jrm11"]
-[ext_resource type="Shape3D" uid="uid://dotbre152bd6t" path="res://scenes/tiles/collider.tres" id="3_g8t0l"]
+[ext_resource type="CylinderMesh" uid="uid://2mxt6327bcrq" path="res://models/hex3d.res" id="1_lxi2k"]
+[ext_resource type="Material" uid="uid://x0dgl4hyrxmn" path="res://materials/grass.tres" id="2_bj13c"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gk4hq"]
 albedo_color = Color(0.39230183, 0.18961346, 0.010801022, 1)
@@ -13,19 +12,19 @@ size = Vector3(0.3, 0.3, 0.3)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_62lp4"]
 albedo_color = Color(0.22745098, 0.45490196, 0.21960784, 1)
 
-[node name="Tile" type="StaticBody3D" unique_id=363773249]
+[node name="Model" type="Node3D" unique_id=251750546]
 
 [node name="Ground" type="MeshInstance3D" parent="." unique_id=1717329491]
 transform = Transform3D(0.8660254, 0, 0.5, 0, 1, 0, -0.5, 0, 0.8660254, 0, -0.5, 0)
-mesh = ExtResource("1_hdc3d")
-surface_material_override/0 = ExtResource("2_jrm11")
+mesh = ExtResource("1_lxi2k")
+surface_material_override/0 = ExtResource("2_bj13c")
 
 [node name="Tree" type="Node3D" parent="." unique_id=417687205]
 transform = Transform3D(0.74831253, 0, 0, 0, 1.122, 0, 0, 0, 0.70616955, -0.1636352, 0, 0)
 
 [node name="Bark" type="MeshInstance3D" parent="Tree" unique_id=425129214]
 transform = Transform3D(0.101092465, 0, 0.05836577, 0, 0.33329603, 0, -0.075, 0, 0.12990381, -0.18832827, 0.09485478, 0.00795047)
-mesh = ExtResource("1_hdc3d")
+mesh = ExtResource("1_lxi2k")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_gk4hq")
 
@@ -40,7 +39,7 @@ transform = Transform3D(1, 0, 0, 0, 1.7354937, 0, 0, 0, 0.778, 0.42171276, 0, -0
 
 [node name="Bark" type="MeshInstance3D" parent="Tree2" unique_id=1670407824]
 transform = Transform3D(0.101092465, 0, 0.05836577, 0, 0.33329603, 0, -0.075, 0, 0.12990381, -0.18832827, 0.09485478, 0.00795047)
-mesh = ExtResource("1_hdc3d")
+mesh = ExtResource("1_lxi2k")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_gk4hq")
 
@@ -55,7 +54,7 @@ transform = Transform3D(1, 0, 0, 0, 0.84339565, 0, 0, 0, 0.778, 0.42171276, 0, 0
 
 [node name="Bark" type="MeshInstance3D" parent="Tree3" unique_id=1301233204]
 transform = Transform3D(0.101092465, 0, 0.05836577, 0, 0.33329603, 0, -0.075, 0, 0.12990381, -0.18832827, 0.09485478, 0.00795047)
-mesh = ExtResource("1_hdc3d")
+mesh = ExtResource("1_lxi2k")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_gk4hq")
 
@@ -64,7 +63,3 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.18717304, 0.34094137, 0.01
 mesh = SubResource("BoxMesh_ol0x4")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_62lp4")
-
-[node name="Collider" type="CollisionShape3D" parent="." unique_id=1626762453]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
-shape = ExtResource("3_g8t0l")

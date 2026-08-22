@@ -17,11 +17,17 @@ public class ViewPack3D : ViewPack
 		const float gapScale = 2f / Visual.Models.Root3;
 
 		Dictionary<Logic.Entities.Tiles.Type, Node3D> tiles = new(keys.Count);
+
+		string pathT = $"scenes/tiles/tile.tscn";
+		PackedScene baseScene = GD.Load<PackedScene>(pathT);
 		foreach (var type in Enum.GetValues<Logic.Entities.Tiles.Type>())
 		{
-			string path = $"scenes/tiles/{tileName}/{type}.tscn";
-			Node3D tile = GD.Load<PackedScene>(path).Instantiate<Node3D>();
+			var tile = baseScene.Instantiate<StaticBody3D>();
 			tile.Scale = new(gapScale, 1f, gapScale);
+
+			Node3D model = GD.Load<PackedScene>($"scenes/tiles/{tileName}/models/{type}.tscn").Instantiate<Node3D>();
+			tile.AddChild(model);
+			tile.GetChild<AnimationPlayer>(1).RootNode = "../Model";
 			tiles.Add(type, tile);
 		}
 
