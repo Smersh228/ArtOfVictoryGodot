@@ -105,4 +105,52 @@ public class Map
 			res -= i * 2;
 		return res;
 	}
+
+	/// <summary>
+	/// Includes FROM position
+	/// </summary>
+	public static IEnumerable<Pos> Raycast(Pos from, Pos to)
+	{
+		var distance = Distance(from, to);
+		var samples = distance + 1;
+
+		for (byte s = 0; s < samples; s++)
+		{
+			float t = 1f / distance * s;
+
+			Lerp(from.L1, to.L1, t, out float L1);
+			Lerp(from.L2, to.L2, t, out float L2);
+			Round(ref L1, ref L2);
+
+			yield return new Pos((sbyte)L1, (sbyte)L2);
+		}
+	}
+
+	private static void Lerp(float a, float b, float t, out float result)
+	{
+		result = a + (b - a) * t;
+	}
+
+	private static void Round(ref float L1, ref float L2)
+	{
+		float L3 = -L1 + -L2;
+
+		float
+		l1 = MathF.Round(L1),
+		l2 = MathF.Round(L2),
+		l3 = MathF.Round(L3);
+
+		float
+		abs1 = MathF.Abs(l1 - L1),
+		abs2 = MathF.Abs(l2 - L2),
+		abs3 = MathF.Abs(l3 - L3);
+
+		if (abs1 > abs2 && abs1 > abs3)
+			l1 = -l2 + -l3;
+		else if (abs2 > abs3)
+			l2 = -l1 + -l3;
+
+		L1 = l1;
+		L2 = l2;
+	}
 }
