@@ -54,12 +54,7 @@ public partial class Interactor : Node
 				],
 				Registry = pack.Registry
 			},
-			Map = new()
-			{
-				Radius = R,
-				Registry = Loader.LoadTiles(),
-				Keys = keys,
-			}
+			Map = Logic.Map.BuildRandomHexagonal(R, Loader.LoadTiles()),
 		};
 
 		vPack = ViewPack3D.FromName(tileName: "cuboid", squadName: "paper", keys: pack.Keys);

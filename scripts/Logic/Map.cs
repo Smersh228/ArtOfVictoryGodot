@@ -65,6 +65,26 @@ public class Map
 	// Pos -> Key
 	public Dictionary<Pos, Entities.Tiles.Type> Keys { get; init; }
 
+	public static Map BuildRandomHexagonal(byte radius, Dictionary<Entities.Tiles.Type, Definition> registry)
+	{
+
+		Dictionary<Pos, Entities.Tiles.Type> keys = [];
+		var values = Enum.GetValues<Entities.Tiles.Type>();
+		foreach (Pos pos in EnumerateRadius(radius))
+		{
+			var index = Random.Shared.Next() % values.Length;
+			keys.Add(pos, values[index]);
+		}
+		keys.TrimExcess();
+
+		return new()
+		{
+			Radius = radius,
+			Registry = registry,
+			Keys = keys,
+		};
+	}
+
 	public IEnumerable<Pos> EnumerateRadius()
 	{
 		return EnumerateRadius(Radius);
