@@ -11,14 +11,8 @@ public class Description
 	public byte MoveRange { get; init; }
 }
 
-public struct Data
-{
-	byte ExecutorId { get; set; }
-	byte Duration { get; set; }
-	byte Direction { get; set; } //(neighbour hex number) (direction sets to squad after execution)
-	byte TargetId { get; set; } //target (squad ID) (or hex num)
-								// hexes for moving to (maximum 4?)
-}
+// TODO: add hexes for moving orders (maximum 4?)
+public record struct Data(ushort ExecutorId, Pos Direction, ushort TargetId, Pos TargetPos, byte Duration);
 
 public class Definition
 {
