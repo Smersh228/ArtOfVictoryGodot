@@ -4,38 +4,25 @@ using Logic.Entities.Squads;
 
 namespace Logic;
 
-public readonly ref struct Squad
+public readonly ref struct Squad(ushort id, Squads squads)
 {
-	public readonly Definition Def;
-	public readonly ref Data Data;
-	public readonly Pos Pos;
-
-	public Squad(Definition def, ref Data data, Pos pos)
-	{
-		Def = def;
-		Data = ref data;
-		Pos = pos;
-	}
+	public Definition Def => squads.Registry[id];
+	public ref Data Data => ref squads.Data[id];
+	public Pos Pos => squads.Positions[id];
 }
 
-public class Squads
+public class Squads(Definition[] set, ushort[] keys, Data[] data, Pos[] positions)
 {
-	public Squad this[ushort id]
-	{
-		get => new(
-			def: Registry[Keys[id]],
-			data: ref Data[id],
-			pos: Positions[id]
-		);
-	}
 	// Key -> Def
-	public Definition[] Registry { get; init; }
+	public Definition[] Registry => set;
 	// Id -> Key
-	public ushort[] Keys { get; init; }
+	public ushort[] Keys => keys;
 	// Id -> Data
-	public Data[] Data { get; init; }
+	public Data[] Data => data;
 	// Id -> Pos
-	public Pos[] Positions { get; init; }
+	public Pos[] Positions => positions;
 	// Id -> Is under fire supression
 	public HashSet<ushort> FireSupression { get; init; }
+
+	public Squad this[ushort id] => new(id, this);
 }

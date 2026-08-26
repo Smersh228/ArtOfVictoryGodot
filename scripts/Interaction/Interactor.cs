@@ -36,17 +36,12 @@ public partial class Interactor : Node
 		session = new()
 		{
 			Commands = [],
-			Squads = new()
-			{
-				Keys = [0, 0],
-				Data = new Logic.Entities.Squads.Data[2],
-				FireSupression = [],
-				Positions = [
-					new(0, 0),
-					new(2, 3)
-				],
-				Registry = pack.Registry
-			},
+			Squads = new(
+				keys: [0, 0],
+				data: [new(), new()],
+				positions: [new(0, 0), new(2, 3)],
+				set: pack.Registry
+			),
 			Map = Logic.Map.BuildRandomHexagonal(R, Loader.LoadTiles()),
 		};
 
