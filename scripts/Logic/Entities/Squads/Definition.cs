@@ -33,7 +33,7 @@ public class Definition
 {
 	public Stats Stats { get; init; }
 	public FirePower FirePower { get; init; }
-	public HashSet<Orders.Order> Orders { get; init; }
+	public HashSet<byte> Orders { get; init; }
 }
 
 public struct Data

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Logic;
 
-public record struct OrderCommand(Entities.Orders.Order Key, Entities.Orders.Data Data);
+public record struct OrderCommand(Order Key, Entities.Orders.Data Data);
 
 public class GameState
 {
