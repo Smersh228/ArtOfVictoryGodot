@@ -7,12 +7,12 @@ namespace Visual;
 
 public partial class Map : Node3D
 {
-	public readonly Dictionary<Logic.Entities.Tiles.Type, Node3D> Registry;
+	public readonly Dictionary<byte, Node3D> Registry;
 	public readonly Dictionary<Pos, Node3D> Models;
 
 	public readonly Dictionary<Node, Pos> Positions;
 
-	public Map(Dictionary<Logic.Entities.Tiles.Type, Node3D> registry, Logic.Map map)
+	public Map(Dictionary<byte, Node3D> registry, Logic.Map map)
 	{
 		Registry = registry;
 		Models = [];

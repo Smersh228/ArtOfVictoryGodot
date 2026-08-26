@@ -33,13 +33,6 @@ public partial class Interactor : Node
 	public override void _Ready()
 	{
 		byte R = 10;
-		Dictionary<Logic.Pos, Logic.Entities.Tiles.Type> keys = [];
-		var values = Enum.GetValues<Logic.Entities.Tiles.Type>();
-		foreach (Logic.Pos pos in Logic.Map.EnumerateRadius(R))
-		{
-			var index = Random.Shared.Next() % values.Length;
-			keys.Add(pos, values[index]);
-		}
 		session = new()
 		{
 			Commands = [],

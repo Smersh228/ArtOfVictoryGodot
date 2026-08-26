@@ -1,6 +1,7 @@
-namespace Logic.Entities.Tiles;
 
-public enum Type : byte
+namespace Interaction.Import;
+
+public enum TileType : byte
 {
 	Plains,
 	Bushes,
