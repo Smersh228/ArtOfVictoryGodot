@@ -4,27 +4,24 @@ using Logic.Entities.Orders;
 
 namespace Logic;
 
-public enum Order : byte
+public readonly ref struct Order(ushort squadId, Orders orders)
 {
-	Defense,
-	FireForSupression,
-	Fire,
-	Smoke,
-	ArtilleryFireRedirection,
+	public byte Key => orders.Keys[squadId];
+	public Description Desc => orders.Registry[Key];
+	public Action<GameState, Data> Action => orders.ActionRegistry[Key];
+	public Data Data => orders.Data[squadId];
 
-	//5
-	PowerfulAtack,
-	Attack,
+	public void Execute(GameState state) => Action.Invoke(state, Data);
+};
 
-	//8
-	Wait,
-	Move,
-	BattleMove,
-	ShootInMove
-}
-
-public class Orders
+public class Orders (Dictionary<byte, Description> set, Dictionary<byte, Action<GameState, Data>> actionSet, ushort squadsCount)
 {
-	public Dictionary<Order, Description> Registry { get; init; }
-	public Dictionary<Order, Action<GameState, Data>> ActionRegistry { get; init; }
+	// Key -> Def
+	public Dictionary<byte, Description> Registry { get; } = set;
+	// Key -> Function
+	public Dictionary<byte, Action<GameState, Data>> ActionRegistry { get; } = actionSet;
+	// SquadId -> Key
+	public byte[] Keys { get; } = new byte[squadsCount];
+	// SquadId -> Data
+	public Data[] Data { get; } = new Data[squadsCount];
 }

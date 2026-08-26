@@ -29,8 +29,10 @@ public class MetaData
 public class DataPack<SquadDef>
 {
 	public MetaData MetaData { get; init; }
-	public readonly Dictionary<string, ushort> Keys;
-	public readonly SquadDef[] Registry;
+	public Dictionary<string, ushort> Keys { get; init; }
+	public SquadDef[] Registry { get; init; }
+
+	public DataPack() { }
 
 	public DataPack(Dictionary<string, string> ymls)
 	{

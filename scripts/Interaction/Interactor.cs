@@ -2,6 +2,9 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using Interaction.Import;
+using Interaction.Import.Orders;
+using YamlDotNet.Serialization;
+using YamlDotNet.Core;
 
 namespace Interaction;
 
@@ -13,6 +16,13 @@ public enum State : byte
 	Order
 }
 
+public class ImportedSquad<TOrder> where TOrder : unmanaged
+{
+	public Logic.Entities.Squads.Stats Stats { get; init; }
+	public Logic.Entities.Squads.FirePower FirePower { get; init; }
+	public HashSet<TOrder> Orders { get; init; }
+}
+
 public partial class Interactor : Node
 {
 	private FreeCam cam = new();
@@ -21,8 +31,6 @@ public partial class Interactor : Node
 
 	private Visual.Session visuals;
 
-	readonly DataPack<Logic.Entities.Squads.Definition> pack = DataPack<Logic.Entities.Squads.Definition>.FromName("test");
-	ViewPack3D vPack;
 	readonly LocalePackString locale = new();
 
 	Node3D selectedSquad = null;
@@ -32,10 +40,35 @@ public partial class Interactor : Node
 
 	public override void _Ready()
 	{
+		//temporary
+		var temp = DataPack<ImportedSquad<Order>>.FromName("test");
+
+		var tSet = temp.Registry;
+		var nSet = new Logic.Entities.Squads.Definition[tSet.Length];
+		for (int i = 0; i < nSet.Length; i++)
+		{
+			HashSet<byte> nOrders = new(tSet[i].Orders.Count);
+			foreach (var order in tSet[i].Orders)
+				nOrders.Add((byte)order);
+			nSet[i] = new()
+			{
+				Stats = tSet[i].Stats,
+				FirePower = tSet[i].FirePower,
+				Orders = nOrders,
+			};
+		}
+		DataPack<Logic.Entities.Squads.Definition> pack = new()
+		{
+			MetaData = temp.MetaData,
+			Keys = temp.Keys,
+			Registry = nSet,
+		};
+		//temporary end
+
 		byte R = 10;
 		session = new()
 		{
-			Commands = [],
+			Orders = new([], [], 2),
 			Squads = new(
 				keys: [0, 0],
 				data: [new(), new()],
@@ -45,7 +78,7 @@ public partial class Interactor : Node
 			Map = Logic.Map.BuildRandomHexagonal(R, Loader.LoadTiles()),
 		};
 
-		vPack = ViewPack3D.FromName(tileName: "cuboid", squadName: "paper", keys: pack.Keys);
+		ViewPack3D vPack = ViewPack3D.FromName(tileName: "cuboid", squadName: "paper", keys: pack.Keys);
 		visuals = new()
 		{
 			Map = new(vPack.Tiles, session.Map),
