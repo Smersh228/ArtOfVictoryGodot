@@ -27,6 +27,18 @@ public class FirePower
 	public byte[] Accuracy { get; init; }
 	public Dictionary<Type, byte[]> Normal { get; init; }
 	public Dictionary<Type, byte[]> Melee { get; init; }
+
+	public Span<byte> this[Type type]
+	{
+		get
+		{
+			if (Melee.ContainsKey(type))
+				return Melee[type];
+			else if (Normal.ContainsKey(type))
+				return Normal[type];
+			else return [];
+		}
+	}
 }
 
 public class Definition
