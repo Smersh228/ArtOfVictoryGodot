@@ -4,7 +4,12 @@ using Logic.Entities.Tiles;
 
 namespace Logic;
 
-public record struct Pos(sbyte L1, sbyte L2);
+public record struct Pos(sbyte L1, sbyte L2)
+{
+	static public Pos operator +(Pos a, Pos b) => new((sbyte)(a.L1 + b.L1), (sbyte)(a.L2 + b.L2));
+
+	static public Pos operator *(Pos a, byte b) => new((sbyte)(a.L1 * b), (sbyte)(a.L2 * b));
+};
 
 public readonly ref struct Tile(Pos pos, Map map)
 {
@@ -38,6 +43,10 @@ public class Map
 				radius = value;
 		}
 	}
+
+	// Indexer
+
+	public Tile this[Pos pos] => new(pos, this);
 
 	// Constructors
 
@@ -160,5 +169,25 @@ public class Map
 
 		L1 = l1;
 		L2 = l2;
+	}
+
+	// Shoot sector
+	public static IEnumerable<Pos> Sector(Pos from, Pos vec, byte range)
+	{
+		Dictionary<Pos, (Pos L, Pos R)> set = new()
+		{
+			[new(00, -1)] = (new(-1, 00), new(+1, -1)),
+			[new(+1, -1)] = (new(00, -1), new(+1, 00)),
+			[new(+1, 00)] = (new(+1, -1), new(00, +1)),
+			[new(00, +1)] = (new(+1, 00), new(-1, +1)),
+			[new(-1, +1)] = (new(00, +1), new(-1, 00)),
+			[new(-1, 00)] = (new(-1, +1), new(00, -1)),
+		};
+		Pos L = set[vec].L, R = set[vec].R;
+		Pos pos0 = from + vec;
+
+		for (byte l = 0; l < range; l++)
+			for (byte r = 0; r < range; r++)
+				yield return pos0 + (L * l) + (R * r);
 	}
 }
