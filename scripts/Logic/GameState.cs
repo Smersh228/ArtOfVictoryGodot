@@ -9,4 +9,6 @@ public class GameState
 	public Orders Orders { get; init; } // 1sq = 1hod = 1order
 
 	public Map Map { get; init; }
+
+	public Squad this[ushort id] => new(id, this);
 }

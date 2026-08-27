@@ -158,7 +158,7 @@ public partial class Interactor : Node
 
 		ushort id = visuals.Squads.Ids[unit];
 
-		var squad = session.Squads[id];
+		var squad = session[id];
 		var data = visuals.Squads.Data[id];
 
 		UI.IUI ui = GetChild<UI.IUI>(0);

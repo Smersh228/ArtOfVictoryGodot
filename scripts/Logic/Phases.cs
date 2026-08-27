@@ -13,17 +13,15 @@ public static class Phases
 	//2
 	public static void DurabilityTest(GameState state, ushort sId)
 	{
-		Squad squad = state.Squads[sId];
+		Squad squad = state[sId];
 		var roll = Actions.RollD6(squad.Def.Stats.Durability.Rolls);
-		var required = squad.Def.Stats.Durability.Value - squad.Data.Loss;
-		if (roll <= required)
+		if (roll <= squad.Durability)
 		{
 			state.Squads.FireSupression.Remove(sId);
 		}
 		else
 		{
 			state.Squads.FireSupression.Add(sId);
-			state.Commands[sId] = new(Entities.Orders.Order.Wait, new());
 			squad.Data.Loss += 1;
 		}
 	}
