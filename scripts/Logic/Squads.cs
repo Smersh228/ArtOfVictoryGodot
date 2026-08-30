@@ -53,4 +53,15 @@ public class Squads(Definition[] set, ushort[] keys, Data[] data, Pos[] position
 	public HashSet<ushort> FireSupression { get; init; }
 
 	public Squad this[ushort id, GameState state] => new(id, state);
+
+	public List<ushort> OnTile(Pos pos)
+	{
+		List<ushort> list = new(5);
+		for (ushort id = 0; id < Positions.Length; id++)
+		{
+			if (positions[id] == pos)
+				list.Add(id);
+		}
+		return list;
+	}
 }
