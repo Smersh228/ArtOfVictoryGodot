@@ -8,7 +8,8 @@ public readonly ref struct Squad(ushort id, GameState state)
 {
 	// Entity values
 	public ushort ID => id;
-	public Definition Def => state.Squads.Registry[id];
+	public ushort Key => state.Squads.Keys[id];
+	public Definition Def => state.Squads.Registry[Key];
 	public ref Data Data => ref state.Squads.Data[id];
 	public Pos Pos => state.Squads.Positions[id];
 	// Entity compute values

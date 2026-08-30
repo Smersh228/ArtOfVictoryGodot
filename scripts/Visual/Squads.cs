@@ -33,7 +33,7 @@ public partial class Squads : Node3D
 			ushort key = squads.Keys[id];
 
 			Node3D model = (Node3D)Registry[key].Duplicate();
-			model.Position = Models.PosToWorld(p, 2);
+			model.Position = Models.PosToWorld(p);
 
 			Ids.Add(model, id);
 			Data[id] = new() { Name = "Тест имя" };
