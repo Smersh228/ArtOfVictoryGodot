@@ -1,38 +1,138 @@
 [gd_scene format=3 uid="uid://c2n0xhmbd0voo"]
 
 [ext_resource type="Script" uid="uid://daxgkeqyybfmn" path="res://scripts/Interaction/UI/UISimple.cs" id="1_fqstv"]
+[ext_resource type="Texture2D" uid="uid://ck7bqmmei433r" path="res://sprites/Ellipse 2.png" id="2_wqktk"]
 
-[node name="UI" type="Control" unique_id=1652514434 node_paths=PackedStringArray("Name")]
+[node name="UI" type="Control" unique_id=1652514434 node_paths=PackedStringArray("Tile", "SquadList", "Squad", "Orders")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 0
 script = ExtResource("1_fqstv")
-Name = NodePath("Top/Name")
+Tile = NodePath("Container/Tile")
+SquadList = NodePath("Container/SquadList")
+Squad = NodePath("Container/Sqaud")
+Orders = NodePath("Container/Orders")
 
-[node name="Top" type="HBoxContainer" parent="." unique_id=434726553]
+[node name="Container" type="VBoxContainer" parent="." unique_id=963464548]
+propagate_maximum_size = false
 layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 23.0
-grow_horizontal = 2
+anchors_preset = -1
+anchor_right = 0.20300001
+anchor_bottom = 0.88100004
+offset_right = -8.856018
 
-[node name="Name" type="Label" parent="Top" unique_id=1298160090]
+[node name="Tile" type="HBoxContainer" parent="Container" unique_id=434726553]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="TextureRect" type="TextureRect" parent="Container/Tile" unique_id=502494472]
+layout_mode = 2
+texture = ExtResource("2_wqktk")
+expand_mode = 2
+
+[node name="Values" type="HFlowContainer" parent="Container/Tile" unique_id=324940567]
+layout_mode = 2
+
+[node name="Pos" type="Label" parent="Container/Tile/Values" unique_id=1298160090]
 layout_mode = 2
 text = "Pos"
 horizontal_alignment = 3
 vertical_alignment = 1
 
-[node name="Pos" type="Label" parent="Top" unique_id=979557989]
+[node name="Barrier" type="Label" parent="Container/Tile/Values" unique_id=983849803]
+layout_mode = 2
+text = "Barrier"
+horizontal_alignment = 3
+vertical_alignment = 1
+
+[node name="TroopTrench" type="Label" parent="Container/Tile/Values" unique_id=213710385]
+layout_mode = 2
+text = "Troop trench"
+horizontal_alignment = 3
+vertical_alignment = 1
+
+[node name="TankTrench" type="Label" parent="Container/Tile/Values" unique_id=2103861797]
+layout_mode = 2
+text = "Tank trench"
+horizontal_alignment = 3
+vertical_alignment = 1
+
+[node name="DOT" type="Label" parent="Container/Tile/Values" unique_id=1702805553]
+layout_mode = 2
+text = "DOT"
+horizontal_alignment = 3
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Container" unique_id=1804293899]
+layout_mode = 2
+
+[node name="SquadList" type="ItemList" parent="Container" unique_id=1156792578]
+layout_mode = 2
+auto_height = true
+item_count = 3
+max_columns = 5
+item_0/text = "Squad 1"
+item_1/text = "Sqaud 2"
+item_2/text = "Sqaud 3"
+
+[node name="Sqaud" type="VBoxContainer" parent="Container" unique_id=1976606304]
+layout_mode = 2
+
+[node name="Selected" type="HFlowContainer" parent="Container/Sqaud" unique_id=173872771]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Container/Sqaud/Selected" unique_id=1898992199]
+layout_mode = 2
+texture = ExtResource("2_wqktk")
+expand_mode = 2
+
+[node name="Name" type="Label" parent="Container/Sqaud/Selected" unique_id=1107544208]
+layout_mode = 2
+text = "Name"
+horizontal_alignment = 3
+vertical_alignment = 1
+
+[node name="Type" type="Label" parent="Container/Sqaud/Selected" unique_id=250515259]
 layout_mode = 2
 text = "Type"
 horizontal_alignment = 3
 vertical_alignment = 1
 
-[node name="Type" type="Label" parent="Top" unique_id=1678596270]
+[node name="Ammo" type="Label" parent="Container/Sqaud/Selected" unique_id=42794193]
 layout_mode = 2
-text = "Pos"
+text = "Ammo"
 horizontal_alignment = 3
 vertical_alignment = 1
+
+[node name="Armor" type="Label" parent="Container/Sqaud/Selected" unique_id=2109223933]
+layout_mode = 2
+text = "Armor"
+horizontal_alignment = 3
+vertical_alignment = 1
+
+[node name="Count" type="Label" parent="Container/Sqaud/Selected" unique_id=880955746]
+layout_mode = 2
+text = "Count"
+horizontal_alignment = 3
+vertical_alignment = 1
+
+[node name="Durability" type="Label" parent="Container/Sqaud/Selected" unique_id=310176255]
+layout_mode = 2
+text = "Durability"
+horizontal_alignment = 3
+vertical_alignment = 1
+
+[node name="HSeparator2" type="HSeparator" parent="Container" unique_id=306557728]
+layout_mode = 2
+
+[node name="Orders" type="ItemList" parent="Container" unique_id=525684815]
+layout_mode = 2
+auto_height = true
+item_count = 1
+max_columns = 3
+same_column_width = true
+item_0/text = "Order1"
