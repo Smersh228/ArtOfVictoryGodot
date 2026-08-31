@@ -37,6 +37,7 @@ public readonly ref struct Squad(ushort id, GameState state)
 		byte level = (byte)(power.Length - Count);
 		return power[level];
 	}
+	public Entities.Orders.Description GetOrder(byte key) => state.Orders.Registry[key];
 }
 
 public class Squads(Definition[] set, ushort[] keys, Data[] data, Pos[] positions)
