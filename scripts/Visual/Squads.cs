@@ -18,6 +18,8 @@ public partial class Squads : Node3D
 	public readonly Dictionary<Node, ushort> Ids;
 	// Id -> Visual data
 	public readonly SquadData[] Data;
+	// Id -> Model
+	public readonly Node3D[] Models;
 
 	public Squads(Node3D[] registry, Logic.Squads squads)
 	{
@@ -26,6 +28,7 @@ public partial class Squads : Node3D
 		Registry = registry;
 		Ids = new(squads.Keys.Length);
 		Data = new SquadData[count];
+		Models = new Node3D[count];
 
 		for (ushort id = 0; id < squads.Keys.Length; id++)
 		{
@@ -33,7 +36,8 @@ public partial class Squads : Node3D
 			ushort key = squads.Keys[id];
 
 			Node3D model = (Node3D)Registry[key].Duplicate();
-			model.Position = Models.PosToWorld(p);
+			model.Position = Visual.Models.PosToWorld(p);
+			Models[id] = model;
 
 			Ids.Add(model, id);
 			Data[id] = new() { Name = "Тест имя" };
