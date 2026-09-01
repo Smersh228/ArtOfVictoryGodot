@@ -1,8 +1,14 @@
+using System.Collections.Generic;
+
 namespace Interaction.UI;
 
 public interface IUI
 {
-	public void Update(SelectionInfo2 data);
+	void Update(Logic.Tile tile, IList<ushort> squads);
 
-	public void HideAll();
+	void HideTile();
+
+	void Update(Visual.SquadData vis, Logic.Squad squad, LocalePackString locale);
+
+	void HideSquad();
 }

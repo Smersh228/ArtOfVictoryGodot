@@ -6,26 +6,48 @@ using Interaction.Import.Orders;
 
 namespace Interaction;
 
-public readonly ref struct SelectionInfo2(Logic.Pos? pos, ushort? id, Logic.GameState state, Visual.Session visuals, LocalePackString locale)
+class Selectable<T> where T : struct, IEquatable<T>
 {
-	public Logic.Pos? Pos => pos;
-	public ushort? ID => id;
+	public T? Field;
+	public event Action<T> OnSelect, OnDeselect;
 
-	public readonly Logic.Tile Tile => state.Map[pos ?? new()];
+	public bool Empty => !Field.HasValue;
 
-	public readonly IList<ushort> Squads => state.Squads.OnTile(pos ?? new());
+	public Diff Cmp(T value)
+	{
+		if (Empty)
+			return Diff.Add;
+		else if (value.Equals(Field.Value))
+			return Diff.None;
+		else //if (value != Field)
+			return Diff.Mod;
+	}
 
-	public Visual.SquadData Vis => visuals.Squads.Data[id ?? 0];
-	public readonly Logic.Squad Squad => state[id ?? 0];
-	public readonly LocalePackString Locale => locale;
+	public void Deselect()
+	{
+		if (!Field.HasValue) return;
+		OnDeselect(Field.Value);
+		Field = null;
+	}
+
+	public void Select(T value)
+	{
+		OnSelect(value);
+		Field = value;
+	}
+
+	public void Set(T value)
+	{
+		Deselect();
+		Select(value);
+	}
 }
 
-public enum State : byte
+enum Diff
 {
-	Watch,
-	Tile,
-	Squad,
-	Order
+	Add, // null -> obj
+	None, // obj1 -> obj1
+	Mod, // obj1 -> obj2
 }
 
 public class ImportedSquad<TOrder> where TOrder : unmanaged
@@ -34,8 +56,6 @@ public class ImportedSquad<TOrder> where TOrder : unmanaged
 	public Logic.Entities.Squads.FirePower FirePower { get; init; }
 	public HashSet<TOrder> Orders { get; init; }
 }
-
-public record struct LSel(Logic.Pos? Pos, ushort? ID);
 
 public partial class Interactor : Node
 {
@@ -47,17 +67,15 @@ public partial class Interactor : Node
 
 	readonly LocalePackString locale = new();
 
-	//NodeSelection selection;
-	LSel sel;
-
-	State state = State.Watch;
+	readonly Selectable<Logic.Pos> tile = new();
+	readonly Selectable<ushort> squad = new();
 
 	// Getters
 	UI.IUI UI => GetChild<UI.IUI>(0);
 
 	public override void _Ready()
 	{
-		//temporary
+		#region temp
 		var temp = DataPack<ImportedSquad<Order>>.FromName("test");
 
 		var tSet = temp.Registry;
@@ -80,7 +98,7 @@ public partial class Interactor : Node
 			Keys = temp.Keys,
 			Registry = nSet,
 		};
-		//temporary end
+		#endregion
 
 		byte R = 10;
 		session = new()
@@ -98,11 +116,44 @@ public partial class Interactor : Node
 		ViewPack3D vPack = ViewPack3D.FromName(tileName: "cuboid", squadName: "paper", keys: pack.Keys);
 		visuals = new()
 		{
-			Map = new(vPack.Tiles, session.Map),
+			Map = new(vPack.Tiles, session.Map)
+			{
+				Select = pos =>
+				{
+					var model = visuals.Map.Models[pos];
+					model.GetChild<AnimationPlayer>(1).Play("SelectUp");
+				},
+				Deselect = pos =>
+				{
+					var model = visuals.Map.Models[pos];
+					model.GetChild<AnimationPlayer>(1).PlayBackwards("SelectUp");
+				}
+			},
 			Squads = new(vPack.Squads, session.Squads),
 		};
 
 		locale.LoadFromName("test", "locale");
+
+		//selection
+		tile.OnSelect += pos =>
+		{
+			visuals.Map.Select(pos);
+			var squads = session.Squads.OnTile(pos);
+			UI.Update(tile: session.Map[pos], squads);
+		};
+		tile.OnDeselect += pos =>
+		{
+			visuals.Map.Deselect(pos);
+			UI.HideTile();
+		};
+		squad.OnSelect += id =>
+		{
+			UI.Update(squad: session[id], locale: locale, vis: visuals.Squads.Data[id]);
+		};
+		squad.OnDeselect += id =>
+		{
+			UI.HideSquad();
+		};
 
 		AddChild(cam);
 		AddChild(visuals.Map);
@@ -116,203 +167,71 @@ public partial class Interactor : Node
 			if (click.IsReleased()) return;
 
 			var node = cam.RayCastSquad();
-			var result = Interact(node);
 
-			Logic.Pos sPos = default;
-			ushort sId = default;
-			switch (result)
+			if (node is null)
 			{
-				case Interaction.Tile:
-					sPos = visuals.Map.Positions[node];
-					break;
-				case Interaction.Squad:
-					sId = visuals.Squads.Ids[node];
-					var squad = session.Squads[sId, session];
-					sPos = squad.Pos;
-					break;
-			}
-
-			switch (state)
-			{
-				case State.Order:
-				case State.Tile:
-				case State.Watch:
-					switch (result)
-					{
-						case Interaction.None:
-							DeselectSquad();
-							DeselectTile();
-							break;
-						case Interaction.Squad:
-							SelectSquad(sId);
-							if (sel.Pos != sPos)
-								SelectTile(sPos);
-
-							state = State.Squad;
-							break;
-						case Interaction.Tile:
-							SelectTile(sPos);
-
-							state = State.Tile;
-							break;
-						case Interaction.Undefined:
-							GD.Print("SELECTED UNDEFINED OBJECT! Inetractor.cs 86");
-							break;
-						default:
-							throw new Exception("Fullfill switch > Intercator.cs 89");
-					}
-					break;
-				case State.Squad:
-					switch (result)
-					{
-						case Interaction.None:
-							state = State.Watch;
-							break;
-						case Interaction.Squad:
-							if (sel.ID == sId) break;
-							DeselectSquad();
-							SelectSquad(sId);
-
-							if (sel.Pos != sPos)
-								SelectTile(sPos);
-							break;
-						case Interaction.Tile:
-							if (sel.ID is null) break;
-
-							session.Squads.Positions[sel.ID.Value] = sPos;
-							visuals.Squads.Models[sel.ID.Value].Position = Visual.Models.PosToWorld(sPos);
-
-							DeselectSquad();
-							DeselectTile();
-
-							state = State.Watch;
-							break;
-						case Interaction.Undefined:
-							break;
-					}
-					break;
-			}
-			SelectionInfo2 si = new(sel.Pos, sel.ID, session, visuals, locale);
-			UI.Update(data: si);
-		}
-	}
-
-	private void DeselectTile()
-	{
-		if (!sel.Pos.HasValue) return;
-
-		var model = visuals.Map.Models[sel.Pos.Value];
-		model.GetChild<AnimationPlayer>(1).PlayBackwards("SelectUp");
-
-		sel.Pos = null;
-	}
-
-	private void DeselectSquad()
-	{
-		if (!sel.ID.HasValue) return;
-
-		sel.ID = null;
-	}
-
-	/*
-	private void ShowSelection(NodeSelection selection)
-	{
-		if (selection.Tile is null)
-		{
-			//show (hide) ui
-			UI.HideAll();
-			return;
-		}
-		var pos = visuals.Map.Positions[selection.Tile];
-		var tile = session.Map[pos];
-		UI.Update(tile);
-
-		var list = session.Squads.OnTile(pos);
-		UI.Update(list);
-
-		if (selection.Squad is null)
-		{
-			//hide ui
-			return;
-		}
-		var id = visuals.Squads.Ids[selection.Squad];
-		var squad = session.Squads[id, session];
-		UI.Update(visuals.Squads.Data[id], squad, locale);
-	}
-	 */
-
-	private void SelectTile(Logic.Pos? pos)
-	{
-		(bool, bool) values = (sel.Pos.HasValue, pos.HasValue);
-		switch (values)
-		{
-			case (false, false): // none => none
-				break;
-			case (false, true): // none => selected
-				var model1 = visuals.Map.Models[pos.Value];
-				model1.GetChild<AnimationPlayer>(1).Play("SelectUp");
-				break;
-			case (true, false): //selected => none
-				DeselectTile();
-				break;
-			case (true, true): //selected => selected
-				if (pos.Value == sel.Pos.Value)
-				{
-					DeselectTile();
-					return;
-				}
-
-				DeselectTile();
-				var model2 = visuals.Map.Models[pos.Value];
-				model2.GetChild<AnimationPlayer>(1).Play("SelectUp");
-				break;
-		};
-		sel.Pos = pos;
-		//old
-		/*
-		if (!sel.Pos.HasValue && !pos.HasValue) return;
-
-		if (pos.HasValue && sel.Pos.HasValue)
-		{
-			if (pos.Value == sel.Pos.Value)
-			{
-				DeselectTile();
 				return;
 			}
+			else if (visuals.Map.Positions.ContainsKey(node))
+			{
+				ProcessTile(node);
+			}
+			else if (visuals.Squads.Ids.ContainsKey(node))
+			{
+				ProcessSquad(node);
+			}
 		}
-		DeselectTile();
-
-		var model = visuals.Map.Models[pos.Value];
-		model.GetChild<AnimationPlayer>(1).Play("SelectUp");
-
-		sel.Pos = pos;
-		 */
 	}
 
-	private void SelectSquad(ushort? id)
+	public void ProcessTile(Node node)
 	{
-		sel.ID = id;
+		var pos = visuals.Map.Positions[node];
+
+		switch (tile.Cmp(pos))
+		{
+			case Diff.Add:
+				tile.Select(pos); break;
+			case Diff.Mod:
+				squad.Deselect();
+				tile.Set(pos);
+				break;
+			case Diff.None:
+				if (squad.Empty)
+				{
+					tile.Deselect();
+				}
+				else squad.Deselect();
+				break;
+		}
 	}
 
-	public enum Interaction
+	public void ProcessSquad(Node node)
 	{
-		None,
-		Squad,
-		Tile,
-		Undefined
-	}
+		var id = visuals.Squads.Ids[node];
+		var lSquad = session.Squads[id, session];
+		var pos = lSquad.Pos;
 
-	private Interaction Interact(Node node)
-	{
-		if (node is null)
-			return Interaction.None;
-
-		if (visuals.Squads.Ids.ContainsKey(node))
-			return Interaction.Squad;
-
-		if (visuals.Map.Positions.ContainsKey(node))
-			return Interaction.Tile;
-
-		return Interaction.Undefined;
+		switch (tile.Cmp(pos))
+		{
+			case Diff.Add:
+				tile.Select(pos);
+				break;
+			case Diff.Mod:
+				tile.Set(pos);
+				break;
+		}
+		switch (squad.Cmp(id))
+		{
+			case Diff.Add:
+				squad.Select(id);
+				break;
+			case Diff.Mod:
+				squad.Set(id);
+				break;
+			case Diff.None:
+				squad.Deselect();
+				tile.Deselect();
+				break;
+		}
 	}
 }
