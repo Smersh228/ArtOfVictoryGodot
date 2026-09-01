@@ -4,7 +4,7 @@ using Logic.Entities.Tiles;
 
 namespace Logic;
 
-public record struct Pos(sbyte L1, sbyte L2)
+public record struct Pos(sbyte L1, sbyte L2) : IEquatable<Pos>
 {
 	static public Pos operator +(Pos a, Pos b) => new((sbyte)(a.L1 + b.L1), (sbyte)(a.L2 + b.L2));
 
