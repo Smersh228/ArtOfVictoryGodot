@@ -12,6 +12,9 @@ public partial class Map : Node3D
 
 	public readonly Dictionary<Node, Pos> Positions;
 
+	public required Action<Pos> Select { get; init; }
+	public required Action<Pos> Deselect { get; init; }
+
 	public Map(Dictionary<byte, Node3D> registry, Logic.Map map)
 	{
 		Registry = registry;
