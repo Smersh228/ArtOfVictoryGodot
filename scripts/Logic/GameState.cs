@@ -10,5 +10,7 @@ public class GameState
 
 	public Map Map { get; init; }
 
-	public Squad this[ushort id] => new(id, this);
+	public Squad Squad(ushort id) => new(id, this);
+
+	public Tile Tile(Pos pos) => new(pos, Map);
 }

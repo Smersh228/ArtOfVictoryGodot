@@ -24,7 +24,7 @@ public readonly ref struct Squad(ushort id, GameState state)
 	public bool Reach(Pos pos) => Map.Distance(Pos, pos) <= Def.FirePower.Range;
 	public byte FP(ushort sId)
 	{
-		var enemy = state[sId];
+		var enemy = state.Squad(sId);
 		var dist = Map.Distance(Pos, enemy.Pos);
 
 		if (dist > Def.FirePower.Range)

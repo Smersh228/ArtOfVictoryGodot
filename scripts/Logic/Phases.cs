@@ -13,7 +13,7 @@ public static class Phases
 	//2
 	public static void DurabilityTest(GameState state, ushort sId)
 	{
-		Squad squad = state[sId];
+		Squad squad = state.Squad(sId);
 		var roll = Actions.RollD6(squad.Def.Stats.Durability.Rolls);
 		if (roll <= squad.Durability)
 		{

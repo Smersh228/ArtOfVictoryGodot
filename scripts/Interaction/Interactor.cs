@@ -148,7 +148,7 @@ public partial class Interactor : Node
 		};
 		squad.OnSelect += id =>
 		{
-			UI.Update(squad: session[id], locale: locale, vis: visuals.Squads.Data[id]);
+			UI.Update(squad: session.Squad(id), locale: locale, vis: visuals.Squads.Data[id]);
 		};
 		squad.OnDeselect += id =>
 		{
