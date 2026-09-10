@@ -1,15 +1,69 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using Logic.Entities.Tiles;
 
 namespace Logic;
+
+enum Axis
+{
+	///<summary> Top -> Bottom </summary>
+	L1,
+	///<summary> Bottom right -> Top left </summary>
+	L2,
+	///<summary> Bottom left -> Top Right </summary>
+	L3
+}
+
+///<summary> Axial coordinates directions (all 6 values)</summary>
+public static class Dir
+{
+	public static readonly Pos
+	Top = new(00, -1),
+	TopR = new(+1, -1),
+	BotR = new(+1, 00),
+	Bot = new(00, +1),
+	BotL = new(-1, +1),
+	TopL = new(-1, 00);
+}
 
 public record struct Pos(sbyte L1, sbyte L2) : IEquatable<Pos>
 {
 	static public Pos operator +(Pos a, Pos b) => new((sbyte)(a.L1 + b.L1), (sbyte)(a.L2 + b.L2));
 
 	static public Pos operator *(Pos a, byte b) => new((sbyte)(a.L1 * b), (sbyte)(a.L2 * b));
+
+	public readonly Vector2 Vec2
+	{
+		get
+		{
+			float x = HStep * L1;
+			float vOffset = -((L1 / 2f) + L2);
+			float y = VStep * vOffset;
+			return new(x, y);
+		}
+	}
+
+	// For 2D transformation
+	const float
+	Root3 = 1.732051f,
+	HStep = Root3 / 2f,
+	VStep = 1f;
 };
+
+public static class Vector2Extension
+{
+	/// <summary>
+	/// Returns angle in <b>degrees</b>
+	/// </summary>
+	public static float AngleTo(this Vector2 a, Vector2 b)
+	{
+		float dot = Vector2.Dot(a, b);
+		float cosAlpha = dot / (a.Length() * b.Length());
+		float rad = MathF.Acos(cosAlpha);
+		return rad * 180f / MathF.PI;
+	}
+}
 
 public readonly ref struct Tile(Pos pos, Map map)
 {
@@ -171,23 +225,32 @@ public class Map
 		L2 = l2;
 	}
 
-	// Shoot sector
-	public static IEnumerable<Pos> Sector(Pos from, Pos vec, byte range)
+	public static readonly
+	Dictionary<Pos, (Pos L, Pos R)> Sector60Vecs = new()
 	{
-		Dictionary<Pos, (Pos L, Pos R)> set = new()
-		{
-			[new(00, -1)] = (new(-1, 00), new(+1, -1)),
-			[new(+1, -1)] = (new(00, -1), new(+1, 00)),
-			[new(+1, 00)] = (new(+1, -1), new(00, +1)),
-			[new(00, +1)] = (new(+1, 00), new(-1, +1)),
-			[new(-1, +1)] = (new(00, +1), new(-1, 00)),
-			[new(-1, 00)] = (new(-1, +1), new(00, -1)),
-		};
-		Pos L = set[vec].L, R = set[vec].R;
-		Pos pos0 = from + vec;
+		[Dir.Top ] = (Dir.TopL, Dir.TopR),
+		[Dir.TopR] = (Dir.Top, 	Dir.BotR),
+		[Dir.BotR] = (Dir.TopR, Dir.Bot	),
+		[Dir.Bot ] = (Dir.BotR, Dir.BotL),
+		[Dir.BotL] = (Dir.Bot, 	Dir.TopL),
+		[Dir.TopL] = (Dir.BotL, Dir.Top	),
+	};
+
+	// Shoot sector
+	public static IEnumerable<Pos> Sector(Pos from, Pos dir, byte range)
+	{
+		(Pos L, Pos R) = Sector60Vecs[dir];
+		Pos pos0 = from + dir;
 
 		for (byte l = 0; l < range; l++)
 			for (byte r = 0; r < range; r++)
 				yield return pos0 + (L * l) + (R * r);
+	}
+
+	public static bool IsInSector60(Pos target, Pos center, Pos secDir)
+	{
+		var dir = target.Vec2 - center.Vec2;
+		short deg = (short)secDir.Vec2.AngleTo(dir);
+		return MathF.Abs(deg) <= 30;
 	}
 }
