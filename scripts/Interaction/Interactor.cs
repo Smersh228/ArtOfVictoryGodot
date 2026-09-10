@@ -148,7 +148,7 @@ public partial class Interactor : Node
 		};
 		squad.OnSelect += id =>
 		{
-			UI.Update(squad: session.Squad(id), locale: locale, vis: visuals.Squads.Data[id]);
+			UI.Update(squad: session.Squads[id], locale: locale, vis: visuals.Squads.Data[id]);
 		};
 		squad.OnDeselect += id =>
 		{
@@ -208,7 +208,7 @@ public partial class Interactor : Node
 	public void ProcessSquad(Node node)
 	{
 		var id = visuals.Squads.Ids[node];
-		var lSquad = session.Squads[id, session];
+		var lSquad = session.Squads[id];
 		var pos = lSquad.Pos;
 
 		switch (tile.Cmp(pos))

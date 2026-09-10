@@ -11,32 +11,7 @@ public static class Phases
 	}
 
 	//2
-	public static void DurabilityTest(GameState state, ushort sId)
-	{
-		Squad squad = state.Squad(sId);
-		var roll = Actions.RollD6(squad.Def.Stats.Durability.Rolls);
-		if (roll <= squad.Durability)
-		{
-			state.Squads.FireSupression.Remove(sId);
-		}
-		else
-		{
-			state.Squads.FireSupression.Add(sId);
-			squad.Data.Loss += 1;
-		}
-	}
-
-	public static void RecoveryTests(GameState state)
-	{
-		var count = state.Squads.FireSupression.Count;
-		ushort[] FireSupressed = new ushort[count];
-		state.Squads.FireSupression.CopyTo(FireSupressed);
-
-		foreach (var sId in FireSupressed)
-		{
-			DurabilityTest(state, sId);
-		}
-	}
+	// Recovery tests
 
 	//3
 	public static void RadioInterception()

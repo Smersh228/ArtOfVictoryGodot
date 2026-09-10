@@ -2,6 +2,16 @@ using System;
 
 namespace Logic;
 
+public enum AttackResult : byte
+{
+	Unreachable,
+	NoAmmo,
+	LowPower,
+	Miss,
+	NoPenetration,
+	Success
+}
+
 public static class Actions
 {
 	static readonly Random random = new();
@@ -28,33 +38,4 @@ public static class Actions
 		}
 		return result;
 	}
-
-	public static void TestForAttack(GameState state, Squad attacker, Squad target)
-	{
-		// 1 count target defense
-		// 2 count view line and distance to target
-		byte distance = Map.Distance(attacker.Pos, target.Pos);
-		if (distance > attacker.Def.FirePower.Range)
-		{
-			return;
-		}
-		// 3 get target type
-		var type = target.Def.Stats.Type;
-		// 4 get fire power (as D6 count)
-		var fp = attacker.FP(target.ID);
-		// 5 roll dices
-		// 6 compare rolls with accuracy
-		int ac = attacker.Def.FirePower.Accuracy[distance - 1];
-		// 7 remove dices > accuracy for distance
-		// 8 other dices counts as attacks
-		int attackCount = RollD6AndCount(count: fp, max: ac);
-		// 9 attacks count -= targets defense, compute new defense
-		if (target.Armor >= attackCount)
-			return;
-		attackCount -= target.Armor;
-		// 10 now attacks counts as hits
-		// 11 each hit removes durability count / loss
-		target.Data.Loss += (byte)attackCount;
-	}
-
 }

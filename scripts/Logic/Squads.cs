@@ -1,30 +1,27 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Logic.Entities.Squads;
 
 namespace Logic;
 
-public readonly ref struct Squad(ushort id, GameState state)
+public readonly ref struct Squad(ushort id, Squads squads)
 {
 	// Entity values
 	public ushort ID => id;
-	public ushort Key => state.Squads.Keys[id];
-	public Definition Def => state.Squads.Registry[Key];
-	public ref Data Data => ref state.Squads.Data[id];
-	public Pos Pos => state.Squads.Positions[id];
+	public ushort Key => squads.Keys[id];
+	public Definition Def => squads.Registry[Key];
+	public ref Data Data => ref squads.Data[id];
+	public Pos Pos => squads.Positions[id];
 	// Entity compute values
 	public byte Ammo => (byte)(Def.Stats.Ammo - Data.AmmoLoss);
 	public byte Armor => (byte)(Def.Stats.Armor + Data.ArmorChange);
 	public byte Count => (byte)(Def.Stats.Count - Data.Loss);
 	public byte Durability => (byte)(Def.Stats.Durability.Value - Data.Loss);
-	// State dependent
-	public byte Order => state.Orders.Keys[id];
-	public IEnumerable<Pos> Sector => Map.Sector(Pos, new(0, -1), Def.FirePower.Range);
 	// Data dependent
 	public bool Reach(Pos pos) => Map.Distance(Pos, pos) <= Def.FirePower.Range;
-	public byte FP(ushort sId)
+	public byte FP(Squad enemy)
 	{
-		var enemy = state.Squad(sId);
 		var dist = Map.Distance(Pos, enemy.Pos);
 
 		if (dist > Def.FirePower.Range)
@@ -37,7 +34,6 @@ public readonly ref struct Squad(ushort id, GameState state)
 		byte level = (byte)(power.Length - Count);
 		return power[level];
 	}
-	public Entities.Orders.Description GetOrder(byte key) => state.Orders.Registry[key];
 }
 
 public class Squads(Definition[] set, ushort[] keys, Data[] data, Pos[] positions)
@@ -51,9 +47,9 @@ public class Squads(Definition[] set, ushort[] keys, Data[] data, Pos[] position
 	// Id -> Pos
 	public Pos[] Positions => positions;
 	// Id -> Is under fire supression
-	public HashSet<ushort> FireSupression { get; init; }
+	public BitArray FireSupression { get; } = new(keys.Length);
 
-	public Squad this[ushort id, GameState state] => new(id, state);
+	public Squad this[ushort id] => new(id, this);
 
 	public List<ushort> OnTile(Pos pos)
 	{
@@ -64,5 +60,59 @@ public class Squads(Definition[] set, ushort[] keys, Data[] data, Pos[] position
 				list.Add(id);
 		}
 		return list;
+	}
+
+	public AttackResult Attack(ushort attackerId, ushort targetId, byte cost = 1, float fpMult = 1f, byte? accuracySet = null)
+	{
+		var attacker = new Squad(attackerId, this);
+		var target = new Squad(targetId, this);
+		// 0 check ammo
+		if (attacker.Ammo >= cost)
+			attacker.Data.AmmoLoss += cost;
+		else return AttackResult.NoAmmo;
+		// 1 count target defense
+		// 2 count view line and distance to target
+		byte distance = Map.Distance(attacker.Pos, attacker.Pos);
+		if (attacker.Def.FirePower.Range < distance)
+			return AttackResult.Unreachable;
+		// 3 get target type
+		// 4 get fire power (as D6 count) (intensity)
+		var fp = (byte)MathF.Floor(attacker.FP(target) * fpMult);
+		if (fp == 0) return AttackResult.LowPower;
+		// 5 roll dices
+		// 6 compare rolls with accuracy
+		byte acc;
+		if (accuracySet.HasValue)
+		{
+			acc = accuracySet.Value;
+		}
+		else acc = attacker.Def.FirePower.Accuracy[distance - 1];
+		// 7 remove dices > accuracy for distance
+		// 8 other dices counts as attacks
+		int attackCount = Actions.RollD6AndCount(count: fp, max: acc);
+		if (attackCount == 0) return AttackResult.Miss;
+		// 9 attacks count -= targets defense, compute new defense
+		if (target.Armor >= attackCount)
+			return AttackResult.NoPenetration;
+		attackCount -= target.Armor;
+		// 10 now attacks counts as hits
+		// 11 each hit removes durability count / loss
+		target.Data.Loss += (byte)attackCount;
+		return AttackResult.Success;
+	}
+
+	public void DurabilityTest(ushort id)
+	{
+		var squad = new Squad(id, this);
+		var roll = Actions.RollD6(squad.Def.Stats.Durability.Rolls);
+		if (roll <= squad.Durability)
+		{
+			FireSupression[id] = false;
+		}
+		else
+		{
+			FireSupression[id] = true;
+			squad.Data.Loss += 1;
+		}
 	}
 }
