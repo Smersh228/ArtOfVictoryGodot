@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Logic;
 
@@ -12,27 +13,37 @@ public enum AttackResult : byte
 	Success
 }
 
-public static class Actions
+public struct Dice(byte sides)
 {
-	static readonly Random random = new();
+	public readonly byte Roll() => (byte)Random.Shared.Next(1, sides + 1);
 
-	public static ushort RollD6(int count = 1)
+	public readonly IEnumerable<byte> Roll(int count)
 	{
-		ushort result = 0;
 		for (int i = 0; i < count; i++)
-		{
-			result += (ushort)random.Next(1, 7);
-		}
+			yield return Roll();
+	}
+}
+
+public static class Dices
+{
+	public static readonly Dice
+	D4 = new(4),
+	D6 = new(6),
+	D20 = new(20);
+
+	public static int Sum(this IEnumerable<byte> rolls)
+	{
+		int result = 0;
+		foreach (var roll in rolls)
+			result += roll;
 		return result;
 	}
 
-	public static ushort RollD6AndCount(int count = 1, int min = 1, int max = 6)
+	public static int Count(this IEnumerable<byte> rolls, byte max = byte.MaxValue, byte min = 1)
 	{
 		ushort result = 0;
-		ushort roll;
-		for (int i = 0; i < count; i++)
+		foreach (var roll in rolls)
 		{
-			roll = (ushort)random.Next(1, 7);
 			if (roll >= min && roll <= max)
 				result += 1;
 		}

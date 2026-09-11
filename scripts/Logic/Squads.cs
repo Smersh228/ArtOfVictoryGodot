@@ -89,7 +89,7 @@ public class Squads(Definition[] set, ushort[] keys, Data[] data, Pos[] position
 		else acc = attacker.Def.FirePower.Accuracy[distance - 1];
 		// 7 remove dices > accuracy for distance
 		// 8 other dices counts as attacks
-		int attackCount = Actions.RollD6AndCount(count: fp, max: acc);
+		int attackCount = Dices.D6.Roll(fp).Count(max: acc);
 		if (attackCount == 0) return AttackResult.Miss;
 		// 9 attacks count -= targets defense, compute new defense
 		if (target.Armor >= attackCount)
@@ -104,7 +104,8 @@ public class Squads(Definition[] set, ushort[] keys, Data[] data, Pos[] position
 	public void DurabilityTest(ushort id)
 	{
 		var squad = new Squad(id, this);
-		var roll = Actions.RollD6(squad.Def.Stats.Durability.Rolls);
+		var count = squad.Def.Stats.Durability.Rolls;
+		var roll = Dices.D6.Roll(count).Sum();
 		if (roll <= squad.Durability)
 		{
 			FireSupression[id] = false;

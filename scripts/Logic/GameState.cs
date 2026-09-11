@@ -45,4 +45,9 @@ public class GameState
 			if (flags[id]) Squads.DurabilityTest(id);
 		}
 	}
+
+	public byte Distance(ushort fromId, ushort toId)
+	{
+		return Map.Distance(Squads[fromId].Pos, Squads[toId].Pos);
+	}
 }
